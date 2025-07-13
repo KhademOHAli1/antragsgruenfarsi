@@ -1,0 +1,894 @@
+/* Swiss Design Inspired Wizard - Clean, Minimal, Elegant */
+
+/* Reset and Base Styles */
+.wizardWidget,
+.wizardWidget + .content {
+    font-family: 'Helvetica Neue', 'Arial', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hide all wizard steps by default, only show active step */
+.wizardWidget .step-pane {
+    display: none !important;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.wizardWidget .step-pane.active {
+    display: block !important;
+    opacity: 1;
+}
+
+.wizardWidget .step-pane.inactive {
+    display: none !important;
+}
+
+/* Clean Wizard Header - Swiss Grid System */
+.wizardWidget {
+    background: #ffffff;
+    border: 1px solid #e1e4e8;
+    border-radius: 0;
+    box-shadow: none;
+    margin-bottom: 0;
+    overflow: visible;
+}
+
+.wizardWidget .steps {
+    display: flex;
+    background: #ffffff;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    border-bottom: 1px solid #e1e4e8;
+    position: relative;
+}
+
+.wizardWidget .steps li {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    padding: 20px 16px;
+    color: #586069;
+    font-weight: 400;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border-right: 1px solid #e1e4e8;
+    background: none;
+    float: none;
+    margin: 0;
+    height: auto;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+}
+
+.wizardWidget .steps li:last-child {
+    border-right: none;
+}
+
+.wizardWidget .steps li:before,
+.wizardWidget .steps li:after {
+    display: none;
+}
+
+.wizardWidget .steps li.active {
+    color: #24292e;
+    background: #f6f8fa;
+    font-weight: 500;
+    border-bottom: 2px solid #0366d6;
+}
+
+.wizardWidget .steps li.completed {
+    color: #28a745;
+    background: #f6f8fa;
+    position: relative;
+}
+
+.wizardWidget .steps li.completed::after {
+    content: '✓';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: #28a745;
+    font-weight: 600;
+    font-size: 12px;
+    width: 16px;
+    height: 16px;
+    background: #dcffe4;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.wizardWidget .steps li:hover:not(.active) {
+    background: #f6f8fa;
+    color: #24292e;
+}
+
+/* Clean Content Area */
+.wizardWidget + .content {
+    background: #ffffff;
+    border: 1px solid #e1e4e8;
+    border-top: none;
+    padding: 32px;
+    margin-top: 0;
+    max-width: none;
+}
+
+/* Typography - Swiss Style */
+.wizardWidget + .content fieldset {
+    border: none;
+    padding: 0;
+    margin: 0 0 32px 0;
+    background: none;
+}
+
+.wizardWidget + .content fieldset legend {
+    font-size: 24px;
+    font-weight: 600;
+    color: #24292e;
+    margin-bottom: 8px;
+    padding: 0;
+    border: none;
+    width: auto;
+    text-align: right;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+}
+
+.wizardWidget + .content .description {
+    font-size: 16px;
+    color: #586069;
+    margin-bottom: 24px;
+    line-height: 1.5;
+    text-align: right;
+    font-weight: 400;
+}
+
+/* Clean Grid Layout */
+.wizardWidget + .content .options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+/* Minimal Radio/Checkbox Labels */
+.wizardWidget + .content .radio-checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: #ffffff;
+    margin: 0;
+    text-align: right;
+    direction: rtl;
+}
+
+.wizardWidget + .content .radio-checkbox-label:hover {
+    border-color: #0366d6;
+    box-shadow: 0 1px 3px rgba(27, 31, 35, 0.12);
+}
+
+.wizardWidget + .content .radio-checkbox-label .input {
+    margin-left: 12px;
+    margin-right: 0;
+    flex-shrink: 0;
+    order: 3;
+}
+
+.wizardWidget + .content .radio-checkbox-label .title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #24292e;
+    margin-bottom: 4px;
+    flex: 1;
+    order: 1;
+    text-align: right;
+    line-height: 1.3;
+}
+
+.wizardWidget + .content .radio-checkbox-label .description {
+    font-size: 14px;
+    color: #586069;
+    margin: 0;
+    order: 2;
+    text-align: right;
+    line-height: 1.4;
+}
+
+.wizardWidget + .content .radio-checkbox-label input[type="radio"],
+.wizardWidget + .content .radio-checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: #0366d6;
+}
+
+/* Selected state - Clean highlighting */
+.wizardWidget + .content .radio-checkbox-label:has(input:checked) {
+    border-color: #0366d6;
+    background: #f1f8ff;
+    box-shadow: 0 0 0 2px rgba(3, 102, 214, 0.1);
+}
+
+/* Clean Navigation */
+.wizardWidget + .content .navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #e1e4e8;
+}
+
+/* Swiss-style Buttons */
+.wizardWidget + .content .navigation .btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.3;
+    text-decoration: none;
+    background: transparent;
+}
+
+.wizardWidget + .content .navigation .btn-prev {
+    color: #586069;
+    border-color: #e1e4e8;
+    background: #ffffff;
+}
+
+.wizardWidget + .content .navigation .btn-prev:hover {
+    background: #f6f8fa;
+    border-color: #d1d5da;
+}
+
+.wizardWidget + .content .navigation .btn-next,
+.wizardWidget + .content .navigation .btn-primary {
+    color: #ffffff;
+    background: #0366d6;
+    border-color: #0366d6;
+}
+
+.wizardWidget + .content .navigation .btn-next:hover,
+.wizardWidget + .content .navigation .btn-primary:hover {
+    background: #0256cc;
+    border-color: #0256cc;
+}
+
+/* Icon Replacements - Simple CSS Arrows */
+.wizardWidget + .content .navigation .btn .icon-chevron-left:before,
+.wizardWidget + .content .navigation .btn .icon-chevron-right:before {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    vertical-align: middle;
+}
+
+.wizardWidget + .content .navigation .btn .icon-chevron-left:before {
+    border-width: 4px 6px 4px 0;
+    border-color: transparent currentColor transparent transparent;
+    margin-left: 4px;
+}
+
+.wizardWidget + .content .navigation .btn .icon-chevron-right:before {
+    border-width: 4px 0 4px 6px;
+    border-color: transparent transparent transparent currentColor;
+    margin-right: 4px;
+}
+
+/* Clean Form Elements */
+.wizardWidget + .content .textform {
+    max-width: 480px;
+}
+
+.wizardWidget + .content .textform .has-feedback,
+.wizardWidget + .content .textform > div {
+    margin-bottom: 16px;
+}
+
+.wizardWidget + .content .textform label.name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #24292e;
+    margin-bottom: 6px;
+    display: block;
+    text-align: right;
+}
+
+.wizardWidget + .content .textform input,
+.wizardWidget + .content .textform textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.45;
+    transition: border-color 0.15s ease;
+    direction: rtl;
+    text-align: right;
+    font-family: inherit;
+}
+
+.wizardWidget + .content .textform input:focus,
+.wizardWidget + .content .textform textarea:focus {
+    outline: none;
+    border-color: #0366d6;
+    box-shadow: 0 0 0 3px rgba(3, 102, 214, 0.1);
+}
+
+.wizardWidget + .content .contactRow {
+    margin-top: 24px;
+}
+
+.wizardWidget + .content .contactRow label {
+    display: block;
+    text-align: right;
+}
+
+.wizardWidget + .content .contactRow strong {
+    font-size: 14px;
+    font-weight: 500;
+    color: #24292e;
+}
+
+.wizardWidget + .content .contactRow small {
+    color: #586069;
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+}
+
+/* Clean Date picker */
+.wizardWidget + .content .input-group.date {
+    display: flex;
+    direction: rtl;
+}
+
+.wizardWidget + .content .input-group.date .form-control {
+    border-radius: 6px 0 0 6px;
+    border-left: none;
+}
+
+.wizardWidget + .content .input-group.date .input-group-addon {
+    background: #f6f8fa;
+    color: #586069;
+    border: 1px solid #e1e4e8;
+    border-radius: 0 6px 6px 0;
+    border-right: none;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+}
+
+/* Replace glyphicon calendar with simple icon */
+.wizardWidget + .content .input-group.date .glyphicon-calendar:before {
+    content: '📅';
+    font-style: normal;
+    font-size: 14px;
+}
+
+/* Progress indicator - Minimal design */
+.wizard-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #e1e4e8;
+}
+
+.wizard-progress-bar {
+    height: 100%;
+    background: #0366d6;
+    transition: width 0.3s ease;
+}
+
+/* Form validation states */
+.wizardWidget + .content .textform .has-success input,
+.wizardWidget + .content .textform .has-success textarea {
+    border-color: #28a745;
+}
+
+.wizardWidget + .content .textform .has-error input,
+.wizardWidget + .content .textform .has-error textarea {
+    border-color: #d73a49;
+}
+
+/* Hide feedback icons and replace with clean styling */
+.wizardWidget + .content .glyphicon-remove,
+.wizardWidget + .content .glyphicon-ok {
+    display: none;
+}
+
+/* Additional Icon Fixes - Replace all problematic icons */
+
+/* Hide all problematic icon fonts */
+.glyphicon,
+.fa,
+[class*="glyphicon-"],
+[class*="fa-"] {
+    font-family: inherit !important;
+}
+
+/* Calendar icon replacement */
+.glyphicon-calendar::before,
+.fa-calendar::before {
+    content: '📅' !important;
+    font-family: inherit !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+}
+
+/* Remove/error icon replacement */
+.glyphicon-remove::before,
+.fa-remove::before,
+.glyphicon-times::before,
+.fa-times::before {
+    content: '✕' !important;
+    color: #d73a49 !important;
+    font-family: inherit !important;
+}
+
+/* Success/check icon replacement */
+.glyphicon-ok::before,
+.fa-check::before,
+.glyphicon-check::before {
+    content: '✓' !important;
+    color: #28a745 !important;
+    font-family: inherit !important;
+}
+
+/* Warning icon replacement */
+.glyphicon-warning-sign::before,
+.fa-warning::before,
+.fa-exclamation-triangle::before {
+    content: '⚠' !important;
+    color: #ffc107 !important;
+    font-family: inherit !important;
+}
+
+/* Info icon replacement */
+.glyphicon-info-sign::before,
+.fa-info::before,
+.fa-info-circle::before {
+    content: 'ℹ' !important;
+    color: #17a2b8 !important;
+    font-family: inherit !important;
+}
+
+/* User icon replacement */
+.glyphicon-user::before,
+.fa-user::before {
+    content: '👤' !important;
+    font-family: inherit !important;
+}
+
+/* Email icon replacement */
+.glyphicon-envelope::before,
+.fa-envelope::before {
+    content: '✉' !important;
+    font-family: inherit !important;
+}
+
+/* Plus/add icon replacement */
+.glyphicon-plus::before,
+.fa-plus::before {
+    content: '+' !important;
+    font-family: inherit !important;
+}
+
+/* Minus icon replacement */
+.glyphicon-minus::before,
+.fa-minus::before {
+    content: '−' !important;
+    font-family: inherit !important;
+}
+
+/* Settings/gear icon replacement */
+.glyphicon-cog::before,
+.fa-cog::before,
+.fa-gear::before {
+    content: '⚙' !important;
+    font-family: inherit !important;
+}
+
+/* Search icon replacement */
+.glyphicon-search::before,
+.fa-search::before {
+    content: '🔍' !important;
+    font-family: inherit !important;
+}
+
+/* Download icon replacement */
+.glyphicon-download::before,
+.fa-download::before {
+    content: '⬇' !important;
+    font-family: inherit !important;
+}
+
+/* Upload icon replacement */
+.glyphicon-upload::before,
+.fa-upload::before {
+    content: '⬆' !important;
+    font-family: inherit !important;
+}
+
+/* Print icon replacement */
+.glyphicon-print::before,
+.fa-print::before {
+    content: '🖨' !important;
+    font-family: inherit !important;
+}
+
+/* Home icon replacement */
+.glyphicon-home::before,
+.fa-home::before {
+    content: '🏠' !important;
+    font-family: inherit !important;
+}
+
+/* Star icon replacement */
+.glyphicon-star::before,
+.fa-star::before {
+    content: '★' !important;
+    color: #ffc107 !important;
+    font-family: inherit !important;
+}
+
+/* Heart icon replacement */
+.glyphicon-heart::before,
+.fa-heart::before {
+    content: '♥' !important;
+    color: #dc3545 !important;
+    font-family: inherit !important;
+}
+
+/* Lock icon replacement */
+.glyphicon-lock::before,
+.fa-lock::before {
+    content: '🔒' !important;
+    font-family: inherit !important;
+}
+
+/* Unlock icon replacement */
+.glyphicon-unlock::before,
+.fa-unlock::before {
+    content: '🔓' !important;
+    font-family: inherit !important;
+}
+
+/* Trash/delete icon replacement */
+.glyphicon-trash::before,
+.fa-trash::before {
+    content: '🗑' !important;
+    font-family: inherit !important;
+}
+
+/* Edit/pencil icon replacement */
+.glyphicon-pencil::before,
+.glyphicon-edit::before,
+.fa-pencil::before,
+.fa-edit::before {
+    content: '✏' !important;
+    font-family: inherit !important;
+}
+
+/* Eye/view icon replacement */
+.glyphicon-eye-open::before,
+.fa-eye::before {
+    content: '👁' !important;
+    font-family: inherit !important;
+}
+
+/* Hide/invisible icon replacement */
+.glyphicon-eye-close::before,
+.fa-eye-slash::before {
+    content: '🙈' !important;
+    font-family: inherit !important;
+}
+
+/* Clean form validation feedback icons */
+.form-control-feedback {
+    display: none !important;
+}
+
+/* Enhanced input focus for better UX */
+.wizardWidget + .content input:focus,
+.wizardWidget + .content textarea:focus,
+.wizardWidget + .content select:focus {
+    outline: none !important;
+    border-color: #0366d6 !important;
+    box-shadow: 0 0 0 3px rgba(3, 102, 214, 0.1) !important;
+    background-color: #ffffff !important;
+}
+
+/* Clean validation states */
+.wizardWidget + .content .has-success input,
+.wizardWidget + .content .has-success textarea {
+    border-color: #28a745 !important;
+    box-shadow: none !important;
+}
+
+.wizardWidget + .content .has-error input,
+.wizardWidget + .content .has-error textarea {
+    border-color: #d73a49 !important;
+    box-shadow: none !important;
+}
+
+/* Swiss-style tooltips */
+.wizardWidget + .content [title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #24292e;
+    color: #ffffff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    margin-bottom: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .wizardWidget + .content {
+        padding: 16px;
+    }
+    
+    .wizardWidget .steps li {
+        font-size: 12px;
+        padding: 16px 8px;
+    }
+    
+    .wizardWidget + .content .options {
+        grid-template-columns: 1fr;
+    }
+    
+    .wizardWidget + .content fieldset legend {
+        font-size: 20px;
+    }
+    
+    .wizardWidget + .content .navigation {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .wizardWidget + .content .navigation .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* RTL Specific Adjustments */
+html[lang="fa"] .wizardWidget .steps {
+    direction: rtl;
+}
+
+html[lang="fa"] .wizardWidget + .content .radio-checkbox-label {
+    direction: rtl;
+    text-align: right;
+}
+
+html[lang="fa"] .wizardWidget + .content .radio-checkbox-label .input {
+    order: 1;
+    margin-right: 12px;
+    margin-left: 0;
+}
+
+html[lang="fa"] .wizardWidget + .content .radio-checkbox-label .title {
+    order: 2;
+}
+
+html[lang="fa"] .wizardWidget + .content .radio-checkbox-label .description {
+    order: 3;
+}
+
+html[lang="fa"] .wizardWidget + .content .navigation {
+    direction: rtl;
+}
+
+html[lang="fa"] .wizardWidget + .content .navigation .btn-prev {
+    order: 2;
+}
+
+html[lang="fa"] .wizardWidget + .content .navigation .btn-next {
+    order: 1;
+}
+
+/* Fix icon directions for RTL */
+html[lang="fa"] .wizardWidget + .content .navigation .btn .icon-chevron-left:before {
+    border-width: 4px 0 4px 6px;
+    border-color: transparent transparent transparent currentColor;
+    margin-right: 4px;
+    margin-left: 0;
+}
+
+html[lang="fa"] .wizardWidget + .content .navigation .btn .icon-chevron-right:before {
+    border-width: 4px 6px 4px 0;
+    border-color: transparent currentColor transparent transparent;
+    margin-left: 4px;
+    margin-right: 0;
+}
+
+/* Progress indicator */
+.wizard-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 0 0 12px 12px;
+    overflow: hidden;
+}
+
+.wizard-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #1abc9c 0%, #3498db 100%);
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 0 10px rgba(26, 188, 156, 0.5);
+}
+
+/* Step completion indicator */
+.wizardWidget .steps li.completed::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 16px;
+    background: #27ae60;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: checkmarkPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes checkmarkPop {
+    0% {
+        transform: translateY(-50%) scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: translateY(-50%) scale(1.2);
+    }
+    100% {
+        transform: translateY(-50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Improved form validation states */
+.wizardWidget + .content .textform .has-success input,
+.wizardWidget + .content .textform .has-success textarea {
+    border-color: #27ae60;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+}
+
+.wizardWidget + .content .textform .has-error input,
+.wizardWidget + .content .textform .has-error textarea {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.wizardWidget + .content .textform .has-content label.name {
+    color: #3498db;
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Loading states for navigation buttons */
+.wizardWidget + .content .navigation .btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.wizardWidget + .content .navigation .btn.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #ffffff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: buttonSpinner 0.8s linear infinite;
+}
+
+@keyframes buttonSpinner {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .wizardWidget + .content {
+        padding: 20px;
+    }
+    
+    .wizardWidget .steps li {
+        font-size: 12px;
+        padding: 15px 5px;
+    }
+    
+    .wizardWidget + .content .options {
+        grid-template-columns: 1fr;
+    }
+    
+    .wizardWidget + .content fieldset legend {
+        font-size: 24px;
+    }
+    
+    .wizardWidget + .content .navigation {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .wizardWidget + .content .navigation .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* RTL Specific Adjustments for Wizard */
+html[lang="fa"] .wizardWidget .steps {
+    direction: rtl;
+}
+
+html[lang="fa"] .wizardWidget + .content .radio-checkbox-label {
+    direction: rtl;
+    text-align: right;
+}
+
+html[lang="fa"] .wizardWidget + .content .radio-checkbox-label .input {
+    order: 1;
+    margin-right: 15px;
+    margin-left: 0;
+}
+
+html[lang="fa"] .wizardWidget + .content .radio-checkbox-label .title {
+    order: 2;
+}
+
+html[lang="fa"] .wizardWidget + .content .radio-checkbox-label .description {
+    order: 3;
+}
+
+html[lang="fa"] .wizardWidget + .content .navigation {
+    direction: rtl;
+}
+
+html[lang="fa"] .wizardWidget + .content .navigation .btn-prev {
+    order: 2;
+}
+
+html[lang="fa"] .wizardWidget + .content .navigation .btn-next {
+    order: 1;
+}

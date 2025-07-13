@@ -85,6 +85,14 @@ if ($layout->ogImage !== null && $layout->ogImage !== '' && !$forbidRobots) {
 
 echo '<link rel="stylesheet" href="' . $mainCssFile . '">' . "\n";
 
+// Add RTL support for Persian/Farsi language
+if ($layout->getHTMLLanguageCode() === 'fa') {
+    echo '<link rel="stylesheet" href="' . $layout->resourceUrl('css/rtl-support.css') . '">' . "\n";
+}
+
+// Add modern wizard styling
+echo '<link rel="stylesheet" href="' . $layout->resourceUrl('css/modern-wizard.css') . '">' . "\n";
+
 echo '<script src="' . $layout->resourceUrl('npm/jquery.min.js') . '"></script>';
 
 $consultation = $controller->consultation;
@@ -98,6 +106,12 @@ if (count($layout->connectLiveEvents) > 0 && $params->live && $consultation) {
     echo '<script src="' . Html::encode($params->live['stompJsUri']) . '"></script>';
 }
 echo \app\models\layoutHooks\Layout::favicons();
+
+// Add Swiss wizard improvements for installation page
+if (strpos($this->context->id, 'installation') !== false || 
+    (isset($this->context->action) && $this->context->action->id === 'index' && !$consultation)) {
+    echo '<script src="' . $layout->resourceUrl('js/swiss-wizard.js') . '"></script>' . "\n";
+}
 
 $this->head();
 

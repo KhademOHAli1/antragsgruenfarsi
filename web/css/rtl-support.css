@@ -1,0 +1,312 @@
+/* RTL Support for Farsi (Persian) Language */
+
+/* Global RTL Settings */
+html[lang="fa"] {
+    direction: rtl;
+}
+
+html[lang="fa"] body {
+    text-align: right;
+    direction: rtl;
+}
+
+/* Text alignment */
+html[lang="fa"] .text-left {
+    text-align: right !important;
+}
+
+html[lang="fa"] .text-right {
+    text-align: left !important;
+}
+
+/* Float adjustments */
+html[lang="fa"] .pull-left {
+    float: right !important;
+}
+
+html[lang="fa"] .pull-right {
+    float: left !important;
+}
+
+/* Navigation and menus */
+html[lang="fa"] .navbar-nav {
+    direction: rtl;
+}
+
+html[lang="fa"] .navbar-nav > li {
+    float: right;
+}
+
+/* Forms */
+html[lang="fa"] .form-horizontal .control-label {
+    text-align: right;
+}
+
+html[lang="fa"] .checkbox,
+html[lang="fa"] .radio {
+    text-align: right;
+}
+
+html[lang="fa"] .checkbox input[type="checkbox"],
+html[lang="fa"] .radio input[type="radio"] {
+    margin-right: 0;
+    margin-left: -20px;
+}
+
+/* Buttons */
+html[lang="fa"] .btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+html[lang="fa"] .btn-group > .btn:last-child:not(:first-child),
+html[lang="fa"] .btn-group > .dropdown-toggle:not(:first-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+/* Icons */
+html[lang="fa"] .icon-chevron-left:before {
+    content: "\f054";
+}
+
+html[lang="fa"] .icon-chevron-right:before {
+    content: "\f053";
+}
+
+/* Wizard specific styles */
+html[lang="fa"] .wizardWidget .steps {
+    direction: rtl;
+}
+
+html[lang="fa"] .wizardWidget .steps li {
+    float: right;
+}
+
+html[lang="fa"] .wizardWidget .navigation {
+    text-align: left;
+}
+
+html[lang="fa"] .wizardWidget .navigation .btn-prev {
+    float: right;
+    margin-left: 10px;
+    margin-right: 0;
+}
+
+html[lang="fa"] .wizardWidget .navigation .btn-next {
+    float: left;
+}
+
+/* Form wizard specific */
+html[lang="fa"] .siteCreate fieldset legend {
+    text-align: right;
+}
+
+html[lang="fa"] .siteCreate .options {
+    direction: rtl;
+}
+
+html[lang="fa"] .siteCreate .radio-checkbox-label {
+    text-align: right;
+    direction: rtl;
+}
+
+html[lang="fa"] .siteCreate .radio-checkbox-label .input {
+    float: left;
+    margin-left: 0;
+    margin-right: 10px;
+}
+
+html[lang="fa"] .siteCreate .radio-checkbox-label .title {
+    text-align: right;
+    direction: rtl;
+}
+
+html[lang="fa"] .siteCreate .radio-checkbox-label .description {
+    text-align: right;
+    direction: rtl;
+}
+
+/* Input groups */
+html[lang="fa"] .input-group .form-control {
+    direction: rtl;
+    text-align: right;
+}
+
+html[lang="fa"] .input-group-addon {
+    direction: rtl;
+}
+
+/* Date picker adjustments */
+html[lang="fa"] .input-group.date .input-group-addon {
+    border-left: 1px solid #ccc;
+    border-right: 0;
+    border-radius: 4px 0 0 4px;
+}
+
+html[lang="fa"] .input-group.date .form-control {
+    border-radius: 0 4px 4px 0;
+}
+
+/* Tables */
+html[lang="fa"] table {
+    direction: rtl;
+}
+
+html[lang="fa"] .table th,
+html[lang="fa"] .table td {
+    text-align: right;
+}
+
+/* Breadcrumbs */
+html[lang="fa"] .breadcrumb > li + li:before {
+    content: "\\";
+    transform: scaleX(-1);
+    padding: 0 5px;
+}
+
+/* Dropdowns */
+html[lang="fa"] .dropdown-menu {
+    text-align: right;
+    direction: rtl;
+}
+
+/* Alerts */
+html[lang="fa"] .alert {
+    text-align: right;
+    direction: rtl;
+}
+
+/* Modal dialogs */
+html[lang="fa"] .modal-header {
+    text-align: right;
+    direction: rtl;
+}
+
+html[lang="fa"] .modal-body {
+    text-align: right;
+    direction: rtl;
+}
+
+html[lang="fa"] .modal-footer {
+    text-align: left;
+    direction: rtl;
+}
+
+html[lang="fa"] .modal-footer .btn {
+    margin-left: 0;
+    margin-right: 5px;
+}
+
+/* Sidebar adjustments */
+html[lang="fa"] .sidebar {
+    direction: rtl;
+    text-align: right;
+}
+
+html[lang="fa"] .sidebar ul {
+    text-align: right;
+}
+
+/* Logo adjustments */
+html[lang="fa"] .logoRow {
+    direction: ltr; /* Keep logo in normal direction */
+}
+
+/* Footer */
+html[lang="fa"] .footer {
+    text-align: right;
+    direction: rtl;
+}
+
+/* Specific adjustments for motion/amendment lists */
+html[lang="fa"] .motionListStd .col-prefix,
+html[lang="fa"] .motionListStd .col-title,
+html[lang="fa"] .motionListStd .col-initiator {
+    text-align: right;
+}
+
+/* Pagination */
+html[lang="fa"] .pagination {
+    direction: rtl;
+}
+
+html[lang="fa"] .pagination > li > a,
+html[lang="fa"] .pagination > li > span {
+    margin-left: 0;
+    margin-right: -1px;
+}
+
+html[lang="fa"] .pagination > li:first-child > a,
+html[lang="fa"] .pagination > li:first-child > span {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+html[lang="fa"] .pagination > li:last-child > a,
+html[lang="fa"] .pagination > li:last-child > span {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+/* Progress bars */
+html[lang="fa"] .progress {
+    direction: ltr; /* Keep progress direction normal */
+}
+
+/* List groups */
+html[lang="fa"] .list-group {
+    direction: rtl;
+}
+
+/* Wells */
+html[lang="fa"] .well {
+    text-align: right;
+    direction: rtl;
+}
+
+/* Panels */
+html[lang="fa"] .panel {
+    direction: rtl;
+}
+
+html[lang="fa"] .panel-heading {
+    text-align: right;
+}
+
+html[lang="fa"] .panel-body {
+    text-align: right;
+}
+
+html[lang="fa"] .panel-footer {
+    text-align: right;
+}
+
+/* Specific form adjustments */
+html[lang="fa"] .textform .has-feedback {
+    direction: rtl;
+}
+
+html[lang="fa"] .textform label.name {
+    text-align: right;
+    display: block;
+}
+
+/* Contact row specific */
+html[lang="fa"] .contactRow label {
+    text-align: right;
+    direction: rtl;
+}
+
+html[lang="fa"] .contactRow textarea {
+    direction: rtl;
+    text-align: right;
+}

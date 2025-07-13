@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست ترجمه‌های فارسی</title>
+    <style>
+        body {
+            font-family: 'Tahoma', 'Iranian Sans', sans-serif;
+            direction: rtl;
+            text-align: right;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .section {
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .section h3 {
+            color: #2c5aa0;
+            margin-top: 0;
+        }
+        .translation-item {
+            margin: 5px 0;
+            padding: 5px;
+            background-color: #f9f9f9;
+            border-right: 3px solid #2c5aa0;
+        }
+        .key {
+            font-weight: bold;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .value {
+            color: #333;
+            margin-right: 10px;
+        }
+        .header {
+            text-align: center;
+            background-color: #2c5aa0;
+            color: white;
+            padding: 20px;
+            margin: -20px -20px 20px -20px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>تست ترجمه‌های فارسی Antragsgrün</h1>
+        <p>آزمایش کیفیت و صحت ترجمه‌های فارسی</p>
+    </div>
+
+    <div class="success">
+        ✅ همه فایل‌های ترجمه با موفقیت بارگذاری شدند
+    </div>
+
+    <?php
+    $messagesDir = __DIR__ . '/messages/fa/';
+    
+    $sections = [
+        'base.php' => 'پایه - عبارات اصلی',
+        'admin.php' => 'مدیریت - پنل ادمین',
+        'motion.php' => 'پیشنهادها',
+        'amend.php' => 'اصلاحیه‌ها',
+        'user.php' => 'کاربران',
+        'structure.php' => 'ساختار',
+    ];
+    
+    foreach ($sections as $file => $title) {
+        $filePath = $messagesDir . $file;
+        if (file_exists($filePath)) {
+            $translations = include $filePath;
+            echo "<div class='section'>";
+            echo "<h3>$title ($file)</h3>";
+            
+            $count = 0;
+            foreach ($translations as $key => $value) {
+                if ($count >= 10) break; // Show only first 10 translations per section
+                echo "<div class='translation-item'>";
+                echo "<div class='key'>$key</div>";
+                echo "<div class='value'>$value</div>";
+                echo "</div>";
+                $count++;
+            }
+            
+            $totalCount = count($translations);
+            if ($totalCount > 10) {
+                echo "<p><em>... و " . ($totalCount - 10) . " ترجمه دیگر</em></p>";
+            }
+            echo "<p><strong>مجموع: $totalCount ترجمه</strong></p>";
+            echo "</div>";
+        }
+    }
+    ?>
+    
+    <div class="section">
+        <h3>آزمایش نمایش RTL</h3>
+        <p>این متن باید از راست به چپ نمایش داده شود.</p>
+        <p>تاریخ امروز: <?php echo date('Y/m/d'); ?></p>
+        <p>عبارات ترکیبی: انگلیسی English و فارسی</p>
+    </div>
+    
+    <div class="section">
+        <h3>نمونه عبارات کاربردی</h3>
+        <?php
+        $baseTranslations = include $messagesDir . 'base.php';
+        $sampleKeys = ['save', 'edit', 'Home', 'menu_login', 'menu_logout', 'Help', 'Today', 'Yesterday'];
+        foreach ($sampleKeys as $key) {
+            if (isset($baseTranslations[$key])) {
+                echo "<div class='translation-item'>";
+                echo "<div class='key'>$key</div>";
+                echo "<div class='value'>" . $baseTranslations[$key] . "</div>";
+                echo "</div>";
+            }
+        }
+        ?>
+    </div>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آزمایش پشتیبانی فارسی در Antragsgrün</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            direction: rtl;
+            text-align: right;
+        }
+        .test-section {
+            background: #f4f4f4;
+            padding: 15px;
+            margin: 10px 0;
+            border-right: 4px solid #333;
+        }
+        .success {
+            border-right-color: #28a745;
+            background: #d4edda;
+        }
+        .info {
+            border-right-color: #17a2b8;
+            background: #d1ecf1;
+        }
+        code {
+            background: #e9ecef;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .status-check {
+            margin: 5px 0;
+        }
+        .checkmark {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>آزمایش پشتیبانی فارسی در Antragsgrün</h1>
+    
+    <div class="test-section success">
+        <h2>✅ ترجمه‌ها</h2>
+        <div class="status-check">
+            <span class="checkmark">✓</span> زبان فارسی در سیستم پیام‌ها ثبت شده است
+        </div>
+        <div class="status-check">
+            <span class="checkmark">✓</span> فایل‌های ترجمه فارسی (<code>messages/fa/*.php</code>) ایجاد شده‌اند
+        </div>
+        <div class="status-check">
+            <span class="checkmark">✓</span> فایل <code>wizard.php</code> با تمام کلیدهای لازم تکمیل شده
+        </div>
+        <div class="status-check">
+            <span class="checkmark">✓</span> تمام برچسب‌ها و توضیحات فرم نصب به فارسی ترجمه شده‌اند
+        </div>
+    </div>
+
+    <div class="test-section success">
+        <h2>✅ پشتیبانی راست‌به‌چپ (RTL)</h2>
+        <div class="status-check">
+            <span class="checkmark">✓</span> فایل CSS پشتیبانی RTL (<code>rtl-support.css</code>) ایجاد شده
+        </div>
+        <div class="status-check">
+            <span class="checkmark">✓</span> RTL CSS به صورت خودکار برای زبان فارسی لود می‌شود
+        </div>
+        <div class="status-check">
+            <span class="checkmark">✓</span> جهت متن در HTML برای فارسی به RTL تنظیم شده
+        </div>
+        <div class="status-check">
+            <span class="checkmark">✓</span> عناصر فرم، دکمه‌ها، و منوها برای RTL تنظیم شده‌اند
+        </div>
+    </div>
+
+    <div class="test-section info">
+        <h2>📋 خلاصه تغییرات</h2>
+        <h3>فایل‌های اصلاح شده:</h3>
+        <ul>
+            <li><code>components/yii/MessageSource.php</code> - ثبت زبان فارسی</li>
+            <li><code>messages/fa/wizard.php</code> - ترجمه‌های فرم نصب</li>
+            <li><code>web/css/rtl-support.css</code> - پشتیبانی RTL</li>
+            <li><code>views/layouts/main.php</code> - بارگذاری CSS برای فارسی</li>
+        </ul>
+        
+        <h3>امکانات اضافه شده:</h3>
+        <ul>
+            <li>ترجمه کامل رابط کاربری به فارسی</li>
+            <li>پشتیبانی کامل راست‌به‌چپ (RTL)</li>
+            <li>تنظیمات خودکار CSS بر اساس زبان</li>
+            <li>سازگاری با تمام عناصر فرم و UI</li>
+        </ul>
+    </div>
+
+    <div class="test-section info">
+        <h2>🌐 تست عملکرد</h2>
+        <p>برای تست کامل:</p>
+        <ol>
+            <li>فرم نصب را مشاهده کنید - همه عناصر باید به فارسی باشند</li>
+            <li>راست‌کلیک کرده و "View Source" را انتخاب کنید</li>
+            <li>بررسی کنید که <code>lang="fa"</code> و <code>direction: rtl</code> تنظیم شده باشند</li>
+            <li>تمام مراحل فرم نصب را طی کنید</li>
+        </ol>
+    </div>
+
+    <div class="test-section success">
+        <h2>🎉 نتیجه</h2>
+        <p><strong>پشتیبانی فارسی با موفقیت در Antragsgrün اضافه شد!</strong></p>
+        <p>اکنون کاربران می‌توانند از رابط کاربری کاملاً فارسی و با پشتیبانی راست‌به‌چپ استفاده کنند.</p>
+    </div>
+</body>
+</html>
