@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'Voting' => 'رأی‌گیری',
+    'name'   => 'نام',
+    'email'  => 'ایمیل',
+    'weight' => 'وزن',
+    'yes'    => 'موافق',
+    'no'     => 'مخالف',
+    'abstention' => 'ممتنع',
+    'present'    => 'حاضر',
+    'answer'     => 'پاسخ',
+    'vote_del'   => 'رأی حذف شد',
+    'weight_del' => 'وزن حذف شد',
+    'weight_set' => 'وزن "%WEIGHT%" تنظیم شد',
+    'voting_opened' => 'رأی‌گیری باز است',
+    'voting_closed' => 'رأی‌گیری بسته است',
+    'voting_current_result' => 'نتیجه فعلی',
+    'voting_has_quorum'     => 'حد نصاب موجود',
+    'voting_no_quorum'      => 'حد نصاب موجود نیست',
+    'voting_abstention'     => 'رأی ممتنع',
+    'voting_yes'            => 'رأی موافق',
+    'voting_no'             => 'رأی مخالف',
+    'voting_weight'         => 'وزن',
+    'voting_total'          => 'کل',
+    'voting_result_accepted' => 'پذیرفته شده',
+    'voting_result_rejected' => 'رد شده',
+];

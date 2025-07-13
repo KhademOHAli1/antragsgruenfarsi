@@ -130,6 +130,11 @@ class MessageSource extends \yii\i18n\MessageSource
                 'me' => 'Montenegrin',
             ], $localMessages);
         }
+        if ($language === 'fa') {
+            return array_merge([
+                'fa' => 'فارسی',
+            ], $localMessages);
+        }
         return [];
     }
 
@@ -142,6 +147,7 @@ class MessageSource extends \yii\i18n\MessageSource
             'nl' => 'Nederlands',
             'ca' => 'Català',
             'me' => 'Montenegrin',
+            'fa' => 'فارسی',
         ];
     }
 
