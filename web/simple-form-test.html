@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Form Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-form { max-width: 600px; margin: 0 auto; }
+        .field { margin: 10px 0; }
+        label { display: block; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 8px; margin-bottom: 10px; }
+        button { background: #007cba; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 4px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="test-form">
+        <h1>Simple Installation Test</h1>
+        
+        <form id="testForm" method="POST">
+            <div class="field">
+                <label>Site Title:</label>
+                <input type="text" name="SiteCreateForm[title]" value="Test Site" required>
+            </div>
+            
+            <div class="field">
+                <label>Contact Email:</label>
+                <input type="email" name="SiteCreateForm[contact]" value="admin@example.com" required>
+            </div>
+            
+            <div class="field">
+                <label>Subdomain:</label>
+                <input type="text" name="SiteCreateForm[subdomain]" value="test123" required>
+            </div>
+            
+            <div class="field">
+                <label>Organization:</label>
+                <input type="text" name="SiteCreateForm[organization]" value="Test Org">
+            </div>
+            
+            <input type="hidden" name="SiteCreateForm[language]" value="fa">
+            <input type="hidden" name="SiteCreateForm[functionality][]" value="1">
+            <input type="hidden" name="SiteCreateForm[openNow]" value="1">
+            <input type="hidden" name="SiteCreateForm[motionsInitiatedBy]" value="2">
+            <input type="hidden" name="SiteCreateForm[hasAmendments]" value="1">
+            <input type="hidden" name="SiteCreateForm[amendmentsInitiatedBy]" value="2">
+            <input type="hidden" name="SiteCreateForm[hasComments]" value="0">
+            <input type="hidden" name="create" value="1">
+            
+            <button type="submit">Create Site</button>
+        </form>
+        
+        <div class="debug" id="debugOutput">
+            Debug output will appear here...
+        </div>
+    </div>
+
+    <script>
+        function addDebug(message) {
+            const debug = document.getElementById('debugOutput');
+            debug.innerHTML += new Date().toLocaleTimeString() + ': ' + message + '<br>';
+        }
+
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            addDebug('Form submitted');
+        });
+
+        // Get CSRF token
+        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+        if (csrfMeta) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_csrf';
+            csrfInput.value = csrfMeta.getAttribute('content');
+            document.getElementById('testForm').appendChild(csrfInput);
+            addDebug('CSRF token added: ' + csrfMeta.getAttribute('content').substring(0, 10) + '...');
+        } else {
+            addDebug('No CSRF token found');
+        }
+
+        addDebug('Test form loaded');
+        addDebug('Current URL: ' + window.location.href);
+    </script>
+</body>
+</html>

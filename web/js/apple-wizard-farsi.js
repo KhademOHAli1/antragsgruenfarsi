@@ -876,57 +876,130 @@ class AppleFarsiWizard {
         
         console.log('Submitting wizard data:', siteFormData);
 
-        // Create a form element and submit it normally (non-AJAX)
-        // This allows the browser to handle redirects naturally
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = window.location.href;
-        form.style.display = 'none';
+        try {
+            // Create a form element and submit it normally (non-AJAX)
+            // This allows the browser to handle redirects naturally
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = window.location.href;
+            form.style.display = 'none';
 
-        // Add CSRF token
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = '_csrf';
-        csrfInput.value = this.getCSRFToken();
-        form.appendChild(csrfInput);
+            // Add CSRF token
+            const csrfToken = this.getCSRFToken();
+            console.log('CSRF Token:', csrfToken ? 'Found' : 'Missing');
+            
+            if (!csrfToken) {
+                throw new Error('CSRF token not found');
+            }
 
-        // Add create parameter
-        const createInput = document.createElement('input');
-        createInput.type = 'hidden';
-        createInput.name = 'create';
-        createInput.value = '1';
-        form.appendChild(createInput);
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_csrf';
+            csrfInput.value = csrfToken;
+            form.appendChild(csrfInput);
 
-        // Add all SiteCreateForm data
+            // Add create parameter
+            const createInput = document.createElement('input');
+            createInput.type = 'hidden';
+            createInput.name = 'create';
+            createInput.value = '1';
+            form.appendChild(createInput);
+
+            // Add all SiteCreateForm data
+            Object.keys(siteFormData).forEach(key => {
+                if (Array.isArray(siteFormData[key])) {
+                    siteFormData[key].forEach(value => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = `SiteCreateForm[${key}][]`;
+                        input.value = value;
+                        form.appendChild(input);
+                        console.log(`Added array field: SiteCreateForm[${key}][] = ${value}`);
+                    });
+                } else {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = `SiteCreateForm[${key}]`;
+                    input.value = siteFormData[key];
+                    form.appendChild(input);
+                    console.log(`Added field: SiteCreateForm[${key}] = ${siteFormData[key]}`);
+                }
+            });
+
+            // Show success message before submitting
+            this.showSuccess();
+
+            // Add form to document
+            document.body.appendChild(form);
+            
+            console.log('Form created with', form.elements.length, 'elements');
+            
+            // Add a timeout fallback in case form submission fails
+            const timeoutId = setTimeout(() => {
+                console.error('Form submission timeout - falling back to AJAX');
+                this.fallbackToAjax(siteFormData);
+            }, 5000);
+
+            // Submit immediately (remove the delay that might be causing issues)
+            console.log('Submitting form...');
+            form.submit();
+            
+            // Clear timeout if form submits successfully
+            clearTimeout(timeoutId);
+            
+        } catch (error) {
+            console.error('Error creating form:', error);
+            this.showError(this.options.rtl ? 
+                'خطا در آماده‌سازی فرم. در حال تلاش مجدد...' :
+                'Error preparing form. Retrying...'
+            );
+            
+            // Fallback to AJAX if form creation fails
+            setTimeout(() => {
+                this.fallbackToAjax(siteFormData);
+            }, 1000);
+        }
+    }
+
+    fallbackToAjax(siteFormData) {
+        console.log('Using AJAX fallback...');
+        
+        const formData = new FormData();
+        formData.append('_csrf', this.getCSRFToken());
+        formData.append('create', '1');
+        
         Object.keys(siteFormData).forEach(key => {
             if (Array.isArray(siteFormData[key])) {
                 siteFormData[key].forEach(value => {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = `SiteCreateForm[${key}][]`;
-                    input.value = value;
-                    form.appendChild(input);
+                    formData.append(`SiteCreateForm[${key}][]`, value);
                 });
             } else {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = `SiteCreateForm[${key}]`;
-                input.value = siteFormData[key];
-                form.appendChild(input);
+                formData.append(`SiteCreateForm[${key}]`, siteFormData[key]);
             }
         });
 
-        // Show success message before submitting
-        this.showSuccess();
-
-        // Add form to document and submit
-        document.body.appendChild(form);
-        
-        // Submit after a short delay to show the success message
-        setTimeout(() => {
-            console.log('Submitting form...');
-            form.submit();
-        }, 1000);
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            console.log('AJAX Response status:', response.status);
+            if (response.ok) {
+                // Force redirect to the main page
+                window.location.href = window.location.origin;
+            } else {
+                throw new Error(`HTTP ${response.status}`);
+            }
+        })
+        .catch(error => {
+            console.error('AJAX fallback failed:', error);
+            this.showError(this.options.rtl ? 
+                'خطا در ثبت اطلاعات. لطفاً صفحه را رفرش کنید.' :
+                'Error saving data. Please refresh the page.'
+            );
+            this.nextButton.disabled = false;
+            this.updateNavigation();
+        });
     }
 
     prepareSiteFormData() {
@@ -936,38 +1009,49 @@ class AppleFarsiWizard {
         // Required basic fields - use the correct field names from our form
         formData.title = this.stepData.siteName || this.stepData.organization || 'انتراگزگرون فارسی';
         formData.contact = this.stepData.contactEmail || 'admin@example.com';
-        formData.subdomain = 'main';
+        
+        // Generate a unique subdomain to avoid conflicts
+        const timestamp = Date.now().toString().slice(-6);
+        formData.subdomain = `site${timestamp}`;
+        
         formData.organization = this.stepData.organization || this.stepData.siteName || 'سازمان';
         formData.language = this.stepData.language || 'fa';
         formData.siteEmail = this.stepData.contactEmail || 'admin@example.com';
         
         // Default settings
-        formData.openNow = 1;
-        formData.prettyUrls = 1;
-        formData.motionScreening = 1;
-        formData.amendScreening = 1;
+        formData.openNow = '1';
+        formData.prettyUrls = '1';
+        formData.motionScreening = '1';
+        formData.amendScreening = '1';
+        formData.singleMotion = '0';
+        formData.amendSinglePara = '0';
+        formData.speechLogin = '0';
+        formData.speechQuotas = '0';
+        formData.applicationType = '1';
+        formData.needsSupporters = '0';
+        formData.minSupporters = '0';
         
         // Functionality array - build based on selections
         formData.functionality = [];
         
         // Always include basic motions
-        formData.functionality.push(1); // FUNCTIONALITY_MOTIONS
+        formData.functionality.push('1'); // FUNCTIONALITY_MOTIONS
         
         // Purpose-based functionality
         if (this.stepData.purpose_options) {
             const purpose = this.stepData.purpose_options[0];
             switch (purpose) {
                 case 'party':
-                    formData.functionality.push(2); // FUNCTIONALITY_MANIFESTO
-                    formData.functionality.push(6); // FUNCTIONALITY_STATUTE_AMENDMENTS
+                    formData.functionality.push('2'); // FUNCTIONALITY_MANIFESTO
+                    formData.functionality.push('6'); // FUNCTIONALITY_STATUTE_AMENDMENTS
                     break;
                 case 'association':
-                    formData.functionality.push(3); // FUNCTIONALITY_APPLICATIONS
-                    formData.functionality.push(4); // FUNCTIONALITY_AGENDA
+                    formData.functionality.push('3'); // FUNCTIONALITY_APPLICATIONS
+                    formData.functionality.push('4'); // FUNCTIONALITY_AGENDA
                     break;
                 case 'parliament':
-                    formData.functionality.push(4); // FUNCTIONALITY_AGENDA
-                    formData.functionality.push(5); // FUNCTIONALITY_SPEECH_LISTS
+                    formData.functionality.push('4'); // FUNCTIONALITY_AGENDA
+                    formData.functionality.push('5'); // FUNCTIONALITY_SPEECH_LISTS
                     break;
             }
         }
@@ -978,14 +1062,14 @@ class AppleFarsiWizard {
             const hasMotionsFromBoard = this.stepData.motions_options.includes('board');
             
             if (hasMotionsFromMembers) {
-                formData.motionsInitiatedBy = 2; // MOTION_INITIATED_LOGGED_IN
+                formData.motionsInitiatedBy = '2'; // MOTION_INITIATED_LOGGED_IN
             } else if (hasMotionsFromBoard) {
-                formData.motionsInitiatedBy = 1; // MOTION_INITIATED_ADMINS
+                formData.motionsInitiatedBy = '1'; // MOTION_INITIATED_ADMINS
             } else {
-                formData.motionsInitiatedBy = 1; // MOTION_INITIATED_ADMINS (default)
+                formData.motionsInitiatedBy = '1'; // MOTION_INITIATED_ADMINS (default)
             }
         } else {
-            formData.motionsInitiatedBy = 2; // Default to logged in users
+            formData.motionsInitiatedBy = '2'; // Default to logged in users
         }
         
         // Amendment configuration
@@ -993,13 +1077,12 @@ class AppleFarsiWizard {
             const allowAmendments = this.stepData.amendments_options.includes('enable');
             const singleParagraph = this.stepData.amendments_options.includes('single');
             
-            formData.hasAmendments = allowAmendments ? 1 : 0;
-            formData.amendSinglePara = singleParagraph ? 1 : 0;
-            formData.amendmentsInitiatedBy = allowAmendments ? 2 : 1; // Logged in users if enabled
+            formData.hasAmendments = allowAmendments ? '1' : '0';
+            formData.amendSinglePara = singleParagraph ? '1' : '0';
+            formData.amendmentsInitiatedBy = allowAmendments ? '2' : '1'; // Logged in users if enabled
         } else {
-            formData.hasAmendments = 1; // Default enable
-            formData.amendSinglePara = 0;
-            formData.amendmentsInitiatedBy = 2;
+            formData.hasAmendments = '1'; // Default enable
+            formData.amendmentsInitiatedBy = '2';
         }
         
         // Special features
@@ -1009,25 +1092,24 @@ class AppleFarsiWizard {
             const hasSpeech = this.stepData.special_options.includes('speechLists');
             const hasSupporters = this.stepData.special_options.includes('supporters');
             
-            formData.hasComments = hasComments ? 1 : 0;
-            formData.needsSupporters = hasSupporters ? 1 : 0;
-            formData.minSupporters = hasSupporters ? 3 : 0;
+            formData.hasComments = hasComments ? '1' : '0';
+            formData.needsSupporters = hasSupporters ? '1' : '0';
+            formData.minSupporters = hasSupporters ? '3' : '0';
             
             if (hasVoting) {
-                formData.functionality.push(7); // FUNCTIONALITY_VOTINGS
+                formData.functionality.push('7'); // FUNCTIONALITY_VOTINGS
             }
             if (hasSpeech) {
-                formData.functionality.push(5); // FUNCTIONALITY_SPEECH_LISTS
-                formData.speechLogin = 1;
+                formData.functionality.push('5'); // FUNCTIONALITY_SPEECH_LISTS
+                formData.speechLogin = '1';
             }
         } else {
-            formData.hasComments = 0;
-            formData.needsSupporters = 0;
+            formData.hasComments = '0';
         }
         
         // Ensure functionality array has at least motions
         if (formData.functionality.length === 0) {
-            formData.functionality = [1];
+            formData.functionality = ['1'];
         }
         
         console.log('Prepared form data:', formData);
