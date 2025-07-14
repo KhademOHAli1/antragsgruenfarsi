@@ -93,6 +93,13 @@ if ($layout->getHTMLLanguageCode() === 'fa') {
 // Add modern wizard styling
 echo '<link rel="stylesheet" href="' . $layout->resourceUrl('css/modern-wizard.css') . '">' . "\n";
 
+// Add Apple-inspired wizard for installation pages
+$routeId = $controller->route ?? '';
+if (str_contains($routeId, 'installation') || str_contains($routeId, 'createsiteWizard') || 
+    (isset($_GET['installationWizard']) && $_GET['installationWizard'] === 'apple')) {
+    echo '<link rel="stylesheet" href="' . $layout->resourceUrl('css/apple-wizard-farsi.css') . '">' . "\n";
+}
+
 echo '<script src="' . $layout->resourceUrl('npm/jquery.min.js') . '"></script>';
 
 $consultation = $controller->consultation;
@@ -157,6 +164,14 @@ if (count($layout->connectLiveEvents) && $params->live && $consultation) {
 foreach ($layout->getJSFiles() as $jsFile) {
     echo '<script src="' . $jsFile . '"></script>' . "\n";
 }
+
+// Add Apple-inspired wizard JavaScript for installation pages
+$routeId = $controller->route ?? '';
+if (str_contains($routeId, 'installation') || str_contains($routeId, 'createsiteWizard') || 
+    (isset($_GET['installationWizard']) && $_GET['installationWizard'] === 'apple')) {
+    echo '<script src="' . $layout->resourceUrl('js/apple-wizard-farsi.js') . '"></script>' . "\n";
+}
+
 foreach ($layout->onloadJs as $js) {
     echo '<script>' . $js . '</script>' . "\n";
 }

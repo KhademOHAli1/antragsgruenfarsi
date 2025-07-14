@@ -14,20 +14,17 @@ $this->title = Yii::t('manager', 'title_install');
 
 $layout     = $controller->layoutParams;
 $layout->robotsNoindex = true;
-$layout->addCSS('css/formwizard.css');
-$layout->addCSS('css/manager.css');
-$layout->addAMDModule('installation/InitSite');
-$layout->loadDatepicker();
 
-echo '<h1>' . Yii::t('manager', 'title_install') . '</h1>';
+// Load our Apple-inspired wizard assets
+$layout->addCSS('css/apple-wizard-farsi.css');
+$layout->addJS('js/apple-wizard-farsi.js');
 
+// Check if Farsi language is selected
+$isFarsi = Yii::$app->language === 'fa';
 
-echo Html::beginForm('', 'post', ['class' => 'siteCreate antragsgruenInitForm form-horizontal']);
-
-
-echo $controller->showErrors();
-
-echo $this->render('../createsiteWizard/index', ['model' => $form, 'errors' => [], 'mode' => 'singlesite']);
-
-
-echo Html::endForm();
+// Use the new Apple-inspired wizard
+echo $this->render('../createsiteWizard/apple-wizard', [
+    'model' => $form, 
+    'errors' => [], 
+    'mode' => 'singlesite'
+]);

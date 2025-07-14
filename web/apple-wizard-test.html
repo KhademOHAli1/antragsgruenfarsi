@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple Wizard Test - تست سحرنامه اپل</title>
+    <link rel="stylesheet" href="css/apple-wizard-farsi.css">
+</head>
+<body>
+    <div id="AppleFarsiWizard" class="apple-wizard-container">
+        <!-- Wizard will be generated here -->
+    </div>
+
+    <script>
+        // Configuration for the wizard test
+        window.wizardConfig = {
+            mode: 'singlesite',
+            language: 'fa',
+            isRTL: true,
+            csrfToken: 'test-token',
+            baseUrl: '',
+            translations: {
+                title: 'نصب انتراگسگرین',
+                subtitle: 'ما شما را در مراحل نصب راهنمایی می‌کنیم تا بتوانید پلتفرم خود را با بهترین تنظیمات راه‌اندازی کنید',
+                
+                step_purpose: 'هدف و کارکرد',
+                step_motions: 'پیشنهادات',
+                step_amendments: 'اصلاحیه‌ها',
+                step_special: 'امکانات ویژه',
+                step_site: 'اطلاعات سایت',
+                
+                previous: 'قبلی',
+                next: 'بعدی',
+                complete: 'تکمیل نصب',
+                
+                functionality_motions: 'پیشنهادات و تصمیمات',
+                functionality_manifesto: 'برنامه و اعلامیه',
+                functionality_applications: 'درخواست‌ها و کاندیداتوری',
+                functionality_agenda: 'دستور جلسه',
+                
+                site_name: 'نام سایت',
+                organization: 'نام سازمان',
+                contact_email: 'ایمیل تماس',
+                default_language: 'زبان پیش‌فرض',
+                
+                motion_type: 'نوع پیشنهادات',
+                motion_deadline: 'مهلت ارسال پیشنهادات',
+                motion_screening: 'بررسی پیشنهادات',
+                
+                amendment_type: 'نوع اصلاحیه‌ها',
+                amendment_deadline: 'مهلت ارسال اصلاحیه‌ها',
+                
+                comments_system: 'سیستم نظرات',
+                speech_lists: 'لیست سخنرانان',
+                online_voting: 'رای‌گیری آنلاین',
+                supporter_system: 'سیستم حمایت‌کنندگان',
+                
+                required_field: 'این فیلد الزامی است',
+                invalid_email: 'فرمت ایمیل صحیح نیست',
+                select_option: 'لطفاً یکی از گزینه‌ها را انتخاب کنید',
+                
+                setup_complete: 'نصب با موفقیت تکمیل شد!',
+                setup_error: 'خطا در ارسال اطلاعات. لطفاً دوباره تلاش کنید.',
+                redirecting: 'در حال هدایت...',
+                completing: 'در حال تکمیل...'
+            },
+            model: {
+                functionality: [],
+                title: '',
+                organization: '',
+                contact: '',
+                language: 'fa',
+                motionType: 'single',
+                motionDeadline: '',
+                amendmentType: 'paragraph',
+                amendmentDeadline: '',
+                features: []
+            }
+        };
+    </script>
+    <script src="js/apple-wizard-farsi.js"></script>
+</body>
+</html>
