@@ -859,6 +859,9 @@ class AppleFarsiWizard {
     }
 
     completeWizard() {
+        console.log('Starting wizard completion...');
+        console.log('Current step data:', this.stepData);
+        
         // Show loading state
         this.nextButton.innerHTML = `
             <div class="apple-loading">
@@ -868,20 +871,32 @@ class AppleFarsiWizard {
         `;
         this.nextButton.disabled = true;
 
-        // Prepare form data
+        // Prepare form data in the format expected by AntragsgruenInitSite
         const formData = new FormData();
         formData.append('_csrf', this.getCSRFToken());
+        formData.append('create', '1'); // This triggers the form submission
         
-        // Add all collected data
-        Object.keys(this.stepData).forEach(key => {
-            if (Array.isArray(this.stepData[key])) {
-                this.stepData[key].forEach(value => {
-                    formData.append(`${key}[]`, value);
+        // Map our step data to the expected SiteCreateForm structure
+        const siteFormData = this.prepareSiteFormData();
+        
+        // Add all SiteCreateForm data
+        Object.keys(siteFormData).forEach(key => {
+            if (Array.isArray(siteFormData[key])) {
+                siteFormData[key].forEach(value => {
+                    formData.append(`SiteCreateForm[${key}][]`, value);
                 });
             } else {
-                formData.append(key, this.stepData[key]);
+                formData.append(`SiteCreateForm[${key}]`, siteFormData[key]);
             }
         });
+
+        console.log('Submitting wizard data:', siteFormData);
+        
+        // Debug: Show what's being sent
+        console.log('Form data being sent:');
+        for (let [key, value] of formData.entries()) {
+            console.log(key, '=', value);
+        }
 
         // Submit form
         fetch(window.location.href, {
@@ -892,14 +907,32 @@ class AppleFarsiWizard {
             }
         })
         .then(response => {
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            
             if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+        })
+        .then(html => {
+            console.log('Response received, checking content...');
+            console.log('Response HTML length:', html.length);
+            
+            // Check if the response contains success indicators
+            if (html.includes('consultation/index') || html.includes('Installation completed') || html.includes('done')) {
+                console.log('Success detected in response');
                 this.showSuccess();
-                // Redirect or reload after success
+                // Redirect after success
                 setTimeout(() => {
                     window.location.reload();
                 }, 2000);
             } else {
-                throw new Error('Submission failed');
+                // If it's still the form, there might be validation errors
+                console.log('Form returned with possible errors');
+                console.log('Response preview:', html.substring(0, 500));
+                this.handleFormErrors(html);
             }
         })
         .catch(error => {
@@ -911,6 +944,142 @@ class AppleFarsiWizard {
             this.nextButton.disabled = false;
             this.updateNavigation();
         });
+    }
+
+    prepareSiteFormData() {
+        // Map our wizard data to the expected SiteCreateForm structure
+        const formData = {};
+        
+        // Required basic fields - use the correct field names from our form
+        formData.title = this.stepData.siteName || this.stepData.organization || 'انتراگزگرون فارسی';
+        formData.contact = this.stepData.contactEmail || 'admin@example.com';
+        formData.subdomain = 'main';
+        formData.organization = this.stepData.organization || this.stepData.siteName || 'سازمان';
+        formData.language = this.stepData.language || 'fa';
+        formData.siteEmail = this.stepData.contactEmail || 'admin@example.com';
+        
+        // Default settings
+        formData.openNow = 1;
+        formData.prettyUrls = 1;
+        formData.motionScreening = 1;
+        formData.amendScreening = 1;
+        
+        // Functionality array - build based on selections
+        formData.functionality = [];
+        
+        // Always include basic motions
+        formData.functionality.push(1); // FUNCTIONALITY_MOTIONS
+        
+        // Purpose-based functionality
+        if (this.stepData.purpose_options) {
+            const purpose = this.stepData.purpose_options[0];
+            switch (purpose) {
+                case 'party':
+                    formData.functionality.push(2); // FUNCTIONALITY_MANIFESTO
+                    formData.functionality.push(6); // FUNCTIONALITY_STATUTE_AMENDMENTS
+                    break;
+                case 'association':
+                    formData.functionality.push(3); // FUNCTIONALITY_APPLICATIONS
+                    formData.functionality.push(4); // FUNCTIONALITY_AGENDA
+                    break;
+                case 'parliament':
+                    formData.functionality.push(4); // FUNCTIONALITY_AGENDA
+                    formData.functionality.push(5); // FUNCTIONALITY_SPEECH_LISTS
+                    break;
+            }
+        }
+        
+        // Motion configuration
+        if (this.stepData.motions_options) {
+            const hasMotionsFromMembers = this.stepData.motions_options.includes('members');
+            const hasMotionsFromBoard = this.stepData.motions_options.includes('board');
+            
+            if (hasMotionsFromMembers) {
+                formData.motionsInitiatedBy = 2; // MOTION_INITIATED_LOGGED_IN
+            } else if (hasMotionsFromBoard) {
+                formData.motionsInitiatedBy = 1; // MOTION_INITIATED_ADMINS
+            } else {
+                formData.motionsInitiatedBy = 1; // MOTION_INITIATED_ADMINS (default)
+            }
+        } else {
+            formData.motionsInitiatedBy = 2; // Default to logged in users
+        }
+        
+        // Amendment configuration
+        if (this.stepData.amendments_options) {
+            const allowAmendments = this.stepData.amendments_options.includes('enable');
+            const singleParagraph = this.stepData.amendments_options.includes('single');
+            
+            formData.hasAmendments = allowAmendments ? 1 : 0;
+            formData.amendSinglePara = singleParagraph ? 1 : 0;
+            formData.amendmentsInitiatedBy = allowAmendments ? 2 : 1; // Logged in users if enabled
+        } else {
+            formData.hasAmendments = 1; // Default enable
+            formData.amendSinglePara = 0;
+            formData.amendmentsInitiatedBy = 2;
+        }
+        
+        // Special features
+        if (this.stepData.special_options) {
+            const hasComments = this.stepData.special_options.includes('comments');
+            const hasVoting = this.stepData.special_options.includes('voting');
+            const hasSpeech = this.stepData.special_options.includes('speechLists');
+            const hasSupporters = this.stepData.special_options.includes('supporters');
+            
+            formData.hasComments = hasComments ? 1 : 0;
+            formData.needsSupporters = hasSupporters ? 1 : 0;
+            formData.minSupporters = hasSupporters ? 3 : 0;
+            
+            if (hasVoting) {
+                formData.functionality.push(7); // FUNCTIONALITY_VOTINGS
+            }
+            if (hasSpeech) {
+                formData.functionality.push(5); // FUNCTIONALITY_SPEECH_LISTS
+                formData.speechLogin = 1;
+            }
+        } else {
+            formData.hasComments = 0;
+            formData.needsSupporters = 0;
+        }
+        
+        // Ensure functionality array has at least motions
+        if (formData.functionality.length === 0) {
+            formData.functionality = [1];
+        }
+        
+        console.log('Prepared form data:', formData);
+        return formData;
+    }
+
+    handleFormErrors(html) {
+        // Parse the returned HTML to check for error messages
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Look for error messages
+        const errorElements = doc.querySelectorAll('.alert-danger, .form-error, .field-error');
+        
+        if (errorElements.length > 0) {
+            let errorMessage = this.options.rtl ? 
+                'خطاهای زیر رخ داده است:' : 
+                'The following errors occurred:';
+            
+            errorElements.forEach(el => {
+                errorMessage += '\n- ' + el.textContent.trim();
+            });
+            
+            this.showError(errorMessage);
+        } else {
+            // Generic error if we can't find specific errors
+            this.showError(this.options.rtl ? 
+                'خطا در ثبت اطلاعات. لطفاً موارد وارد شده را بررسی کنید.' :
+                'Error saving data. Please check your entries.'
+            );
+        }
+        
+        // Re-enable the button
+        this.nextButton.disabled = false;
+        this.updateNavigation();
     }
 
     showSuccess() {
