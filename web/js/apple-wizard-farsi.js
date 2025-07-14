@@ -42,8 +42,32 @@ class AppleFarsiWizard {
         this.updateProgress();
         this.updateNavigation(); // Ensure navigation is properly initialized
 
+        // Prevent browser's unsaved changes warning during wizard use
+        this.setupNavigationHandling();
+
         // Announce wizard ready for screen readers
         this.announceToScreenReader('سحر نصب آماده است' + ' / Installation wizard ready');
+    }
+
+    setupNavigationHandling() {
+        // Store original beforeunload handler if it exists
+        this.originalBeforeUnload = window.onbeforeunload;
+        
+        // Override beforeunload during wizard completion
+        this.isCompleting = false;
+        
+        // Add custom beforeunload only for incomplete wizard
+        window.addEventListener('beforeunload', (e) => {
+            if (!this.isCompleting && this.currentStep < this.steps.length - 1) {
+                // Only warn if user has made progress and hasn't completed
+                if (Object.keys(this.stepData).length > 0) {
+                    e.preventDefault();
+                    return e.returnValue = this.options.rtl ? 
+                        'تغییرات شما ممکن است ذخیره نشود. آیا می‌خواهید خارج شوید؟' :
+                        'Your changes may not be saved. Do you want to leave?';
+                }
+            }
+        });
     }
 
     createWizardStructure() {
@@ -862,6 +886,12 @@ class AppleFarsiWizard {
         console.log('Starting wizard completion...');
         console.log('Current step data:', this.stepData);
         
+        // Mark as completing to disable beforeunload warning
+        this.isCompleting = true;
+        
+        // Disable any existing beforeunload warning
+        window.onbeforeunload = null;
+        
         // Show loading state
         this.nextButton.innerHTML = `
             <div class="apple-loading">
@@ -875,6 +905,15 @@ class AppleFarsiWizard {
         const siteFormData = this.prepareSiteFormData();
         
         console.log('Submitting wizard data:', siteFormData);
+
+        // Clear any saved wizard data since we're completing
+        if (this.options.autoSave) {
+            try {
+                localStorage.removeItem('appleWizardData');
+            } catch (e) {
+                console.warn('Could not clear localStorage:', e);
+            }
+        }
 
         try {
             // Create a form element and submit it normally (non-AJAX)
@@ -934,18 +973,26 @@ class AppleFarsiWizard {
             
             console.log('Form created with', form.elements.length, 'elements');
             
+            // Mark form as submitted to prevent multiple submissions
+            form.setAttribute('data-submitted', 'true');
+            
             // Add a timeout fallback in case form submission fails
             const timeoutId = setTimeout(() => {
                 console.error('Form submission timeout - falling back to AJAX');
                 this.fallbackToAjax(siteFormData);
-            }, 5000);
+            }, 8000); // Increased timeout to 8 seconds
 
-            // Submit immediately (remove the delay that might be causing issues)
+            // Submit immediately
             console.log('Submitting form...');
-            form.submit();
             
-            // Clear timeout if form submits successfully
-            clearTimeout(timeoutId);
+            // Use a slight delay to ensure the success message is visible
+            setTimeout(() => {
+                form.submit();
+                console.log('Form submitted successfully');
+                
+                // Clear timeout since form was submitted
+                clearTimeout(timeoutId);
+            }, 500);
             
         } catch (error) {
             console.error('Error creating form:', error);
@@ -963,6 +1010,10 @@ class AppleFarsiWizard {
 
     fallbackToAjax(siteFormData) {
         console.log('Using AJAX fallback...');
+        
+        // Ensure completion flag is set
+        this.isCompleting = true;
+        window.onbeforeunload = null;
         
         const formData = new FormData();
         formData.append('_csrf', this.getCSRFToken());
