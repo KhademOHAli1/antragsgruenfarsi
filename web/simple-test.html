@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Apple Wizard Test</title>
+    <link rel="stylesheet" href="css/apple-wizard-farsi.css">
+    <style>
+        body {
+            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .test-results {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 9999;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-results" id="testResults">
+        <h4>Test Results</h4>
+        <div id="testOutput"></div>
+    </div>
+    
+    <div id="apple-wizard-container"></div>
+
+    <script src="js/apple-wizard-farsi.js"></script>
+    <script>
+        function addTestOutput(message) {
+            const output = document.getElementById('testOutput');
+            output.innerHTML += `<div>${new Date().toLocaleTimeString()}: ${message}</div>`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        // Override console.log to capture wizard logs
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addTestOutput(args.join(' '));
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            addTestOutput('Starting wizard test...');
+            
+            try {
+                const wizard = new AppleWizardFarsi('apple-wizard-container', {
+                    rtl: false, // Use LTR for simpler testing
+                    autoSave: true,
+                    showProgress: true
+                });
+                
+                addTestOutput('Wizard initialized successfully');
+                
+                // Test after 1 second
+                setTimeout(() => {
+                    addTestOutput('--- Testing Option Selection ---');
+                    
+                    // Find the first option card
+                    const firstOption = document.querySelector('.apple-option-card');
+                    if (firstOption) {
+                        addTestOutput('Found first option: ' + firstOption.querySelector('.apple-option-title').textContent);
+                        
+                        // Simulate click
+                        firstOption.click();
+                        addTestOutput('Clicked first option');
+                        
+                        // Check if it's selected
+                        setTimeout(() => {
+                            const isSelected = firstOption.classList.contains('selected');
+                            addTestOutput('Option selected: ' + isSelected);
+                            
+                            // Check if next button is enabled
+                            const nextButton = document.querySelector('#nextButton');
+                            const isEnabled = !nextButton.disabled;
+                            addTestOutput('Next button enabled: ' + isEnabled);
+                            
+                            if (isEnabled) {
+                                addTestOutput('--- Testing Navigation ---');
+                                nextButton.click();
+                                addTestOutput('Clicked next button');
+                            } else {
+                                addTestOutput('ERROR: Next button should be enabled after selection');
+                            }
+                        }, 100);
+                    } else {
+                        addTestOutput('ERROR: No option cards found');
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                addTestOutput('ERROR: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

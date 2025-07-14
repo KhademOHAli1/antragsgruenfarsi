@@ -40,6 +40,7 @@ class AppleFarsiWizard {
         this.loadSavedData();
         this.showStep(0);
         this.updateProgress();
+        this.updateNavigation(); // Ensure navigation is properly initialized
 
         // Announce wizard ready for screen readers
         this.announceToScreenReader('سحر نصب آماده است' + ' / Installation wizard ready');
@@ -529,7 +530,9 @@ class AppleFarsiWizard {
     }
 
     toggleOption(card) {
+        console.log('toggleOption called for card:', card.querySelector('.apple-option-title')?.textContent);
         const isMultiSelect = card.closest('.apple-options-grid').dataset.multiSelect === 'true';
+        console.log('Is multi-select:', isMultiSelect);
         
         if (isMultiSelect) {
             // Multi-select: toggle individual cards
@@ -557,7 +560,15 @@ class AppleFarsiWizard {
 
         // Save data and validate
         this.saveStepData();
-        this.validateCurrentStep();
+        console.log('About to validate current step...');
+        const isValid = this.validateCurrentStep();
+        console.log('Validation result after toggle:', isValid);
+        this.updateNavigation();
+        
+        // Log for debugging
+        console.log('Option toggled:', title, 'isSelected:', isSelected, 'isValid:', isValid);
+        console.log('Selected cards in current step:', 
+            this.steps[this.currentStep].querySelectorAll('.apple-option-card.selected').length);
     }
 
     showStep(stepIndex) {
@@ -578,6 +589,7 @@ class AppleFarsiWizard {
         setTimeout(() => {
             this.currentStep = stepIndex;
             const newStepEl = this.steps[stepIndex];
+            this.currentStepElement = newStepEl; // Set current step element for validation
             newStepEl.classList.add('active', 'apple-fade-in');
             newStepEl.setAttribute('aria-hidden', 'false');
             
@@ -599,12 +611,20 @@ class AppleFarsiWizard {
     }
 
     nextStep() {
-        if (this.validateCurrentStep()) {
+        console.log('Next step clicked. Current step:', this.currentStep);
+        const isValid = this.validateCurrentStep();
+        console.log('Validation result:', isValid);
+        
+        if (isValid) {
             if (this.currentStep < this.steps.length - 1) {
+                console.log('Moving to next step:', this.currentStep + 1);
                 this.showStep(this.currentStep + 1);
             } else {
+                console.log('Completing wizard');
                 this.completeWizard();
             }
+        } else {
+            console.log('Validation failed, cannot proceed');
         }
     }
 
@@ -660,6 +680,12 @@ class AppleFarsiWizard {
     }
 
     updateNavigation() {
+        // Ensure buttons exist before updating
+        if (!this.prevButton || !this.nextButton) {
+            console.warn('Navigation buttons not found');
+            return;
+        }
+        
         // Previous button
         this.prevButton.disabled = this.currentStep === 0;
         
@@ -682,13 +708,17 @@ class AppleFarsiWizard {
             `;
         }
         
-        this.nextButton.disabled = !this.validateCurrentStep();
+        const isValid = this.validateCurrentStep();
+        this.nextButton.disabled = !isValid;
+        console.log('Navigation updated. Next button disabled:', !isValid);
     }
 
     validateCurrentStep() {
         const currentStepEl = this.steps[this.currentStep];
         const requiredFields = currentStepEl.querySelectorAll('[required]');
         let isValid = true;
+
+        console.log('Validating step:', this.currentStep, 'Step ID:', this.stepDefinitions[this.currentStep].id);
 
         // Clear previous errors
         currentStepEl.querySelectorAll('.apple-alert-error').forEach(alert => alert.remove());
@@ -704,12 +734,17 @@ class AppleFarsiWizard {
         // Step-specific validation
         switch (this.stepDefinitions[this.currentStep].id) {
             case 'purpose':
-                if (!currentStepEl.querySelector('.apple-option-card.selected')) {
+                const selectedOptions = currentStepEl.querySelectorAll('.apple-option-card.selected');
+                console.log('Purpose step - selected options:', selectedOptions.length);
+                if (selectedOptions.length === 0) {
                     isValid = false;
+                    console.log('No options selected, showing error');
                     this.showStepError(currentStepEl, this.options.rtl ? 
                         'لطفاً یکی از گزینه‌ها را انتخاب کنید' : 
                         'Please select at least one option'
                     );
+                } else {
+                    console.log('Options selected:', Array.from(selectedOptions).map(el => el.dataset.value));
                 }
                 break;
             case 'site':
@@ -724,6 +759,7 @@ class AppleFarsiWizard {
                 break;
         }
 
+        console.log('Validation result:', isValid);
         return isValid;
     }
 
