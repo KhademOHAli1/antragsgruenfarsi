@@ -28,7 +28,7 @@
     
     /* Typography Scale */
     --font-family-primary: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    --font-family-farsi: 'SF Pro Display', 'Tehran', 'Tahoma', 'Arial Unicode MS', sans-serif;
+    --font-family-farsi: 'Vazirmatn', 'Iranian Sans', 'IRANSans', 'Tahoma', 'Tehran', 'Arial Unicode MS', sans-serif;
     --font-size-xs: 12px;
     --font-size-sm: 14px;
     --font-size-base: 16px;
@@ -60,6 +60,14 @@
 html[lang="fa"] {
     --font-family-primary: var(--font-family-farsi);
     direction: rtl;
+}
+
+/* Import Iranian Sans font for better Farsi typography */
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
+
+/* Update Farsi font stack with modern Iranian fonts */
+:root {
+    --font-family-farsi: 'Vazirmatn', 'Iranian Sans', 'Tahoma', 'Tehran', 'Arial Unicode MS', sans-serif;
 }
 
 /* Base Reset and Typography */
@@ -157,6 +165,14 @@ html[lang="fa"] {
     border-radius: 1px;
 }
 
+/* RTL Progress Line - starts from right */
+html[lang="fa"] .apple-progress-line-active {
+    left: auto;
+    right: 0;
+    background: linear-gradient(-90deg, var(--primary-blue), var(--primary-blue-hover));
+    transform-origin: right center;
+}
+
 .apple-progress-step {
     width: 40px;
     height: 40px;
@@ -236,14 +252,6 @@ html[lang="fa"] {
 .apple-step.active {
     display: block;
     opacity: 1;
-    transform: translateX(0);
-}
-
-.apple-step.rtl {
-    transform: translateX(-20px);
-}
-
-.apple-step.rtl.active {
     transform: translateX(0);
 }
 
@@ -366,6 +374,15 @@ html[lang="fa"] .apple-option-card.selected::before {
     left: var(--spacing-md);
 }
 
+/* RTL Step Animation */
+html[lang="fa"] .apple-step {
+    transform: translateX(-20px);
+}
+
+html[lang="fa"] .apple-step.active {
+    transform: translateX(0);
+}
+
 .apple-option-icon {
     width: 60px;
     height: 60px;
@@ -408,9 +425,18 @@ html[lang="fa"] .apple-option-card.selected::before {
     border-top: 1px solid var(--border-color-light);
 }
 
-/* Farsi RTL navigation */
+/* RTL navigation - Previous button on right, Next on left */
 html[lang="fa"] .apple-wizard-navigation {
     flex-direction: row-reverse;
+}
+
+/* Ensure buttons maintain proper order in RTL */
+html[lang="fa"] .apple-wizard-navigation #prevButton {
+    order: 2;
+}
+
+html[lang="fa"] .apple-wizard-navigation #nextButton {
+    order: 1;
 }
 
 .apple-button {
@@ -457,6 +483,50 @@ html[lang="fa"] .apple-wizard-navigation {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none !important;
+}
+
+/* RTL Button Content Adjustments */
+html[lang="fa"] .apple-button {
+    flex-direction: row-reverse;
+}
+
+/* Fix button arrows for RTL */
+html[lang="fa"] .apple-button-primary .arrow-right {
+    transform: scaleX(-1);
+}
+
+html[lang="fa"] .apple-button-secondary .arrow-left {
+    transform: scaleX(-1);
+}
+
+/* Improved Farsi Typography */
+html[lang="fa"] .apple-wizard-title {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+html[lang="fa"] .apple-wizard-subtitle,
+html[lang="fa"] .apple-step-description {
+    font-weight: 400;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+}
+
+html[lang="fa"] .apple-form-label {
+    font-weight: 600;
+    letter-spacing: 0.005em;
+}
+
+html[lang="fa"] .apple-option-title {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+html[lang="fa"] .apple-button {
+    font-weight: 600;
+    letter-spacing: 0.01em;
 }
 
 /* Loading States */

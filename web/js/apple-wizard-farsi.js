@@ -84,12 +84,12 @@ class AppleFarsiWizard {
                 <!-- Navigation -->
                 <nav class="apple-wizard-navigation" role="navigation" aria-label="Wizard navigation">
                     <button type="button" class="apple-button apple-button-secondary" id="prevButton" disabled>
-                        <span aria-hidden="true">${this.options.rtl ? '←' : '←'}</span>
+                        <span class="arrow-left" aria-hidden="true">${this.options.rtl ? '→' : '←'}</span>
                         <span>${this.options.rtl ? 'قبلی' : 'Previous'}</span>
                     </button>
                     <button type="button" class="apple-button apple-button-primary" id="nextButton">
                         <span>${this.options.rtl ? 'بعدی' : 'Next'}</span>
-                        <span aria-hidden="true">${this.options.rtl ? '→' : '→'}</span>
+                        <span class="arrow-right" aria-hidden="true">${this.options.rtl ? '←' : '→'}</span>
                     </button>
                 </nav>
 
@@ -194,7 +194,7 @@ class AppleFarsiWizard {
 
     createStepContent(stepDef, index) {
         const step = document.createElement('div');
-        step.className = `apple-step ${this.options.rtl ? 'rtl' : ''}`;
+        step.className = 'apple-step';
         step.setAttribute('data-step', index);
         step.setAttribute('role', 'tabpanel');
         step.setAttribute('aria-labelledby', `step-${index}-label`);
@@ -492,12 +492,23 @@ class AppleFarsiWizard {
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey || e.metaKey) {
-                if (e.key === 'ArrowLeft' && !this.options.rtl || e.key === 'ArrowRight' && this.options.rtl) {
-                    e.preventDefault();
-                    this.previousStep();
-                } else if (e.key === 'ArrowRight' && !this.options.rtl || e.key === 'ArrowLeft' && this.options.rtl) {
-                    e.preventDefault();
-                    this.nextStep();
+                // For RTL, swap arrow key behavior
+                if (this.options.rtl) {
+                    if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        this.previousStep();
+                    } else if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        this.nextStep();
+                    }
+                } else {
+                    if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        this.previousStep();
+                    } else if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        this.nextStep();
+                    }
                 }
             }
         });
@@ -612,7 +623,19 @@ class AppleFarsiWizard {
 
     updateProgress() {
         const progress = ((this.currentStep + 1) / this.steps.length) * 100;
-        this.progressLine.style.width = `${progress}%`;
+        
+        // For RTL, we need to position the progress line from the right
+        if (this.options.rtl) {
+            // Calculate the position from the right side
+            const rightPosition = 100 - progress;
+            this.progressLine.style.right = rightPosition + '%';
+            this.progressLine.style.left = 'auto';
+            this.progressLine.style.width = progress + '%';
+        } else {
+            this.progressLine.style.width = `${progress}%`;
+            this.progressLine.style.left = '0';
+            this.progressLine.style.right = 'auto';
+        }
         
         // Update progress indicator ARIA
         const progressContainer = this.container.querySelector('.apple-progress-container');
@@ -642,13 +665,22 @@ class AppleFarsiWizard {
         
         // Next button
         const isLastStep = this.currentStep === this.steps.length - 1;
-        this.nextButton.innerHTML = `
-            <span>${isLastStep ? 
-                (this.options.rtl ? 'تکمیل نصب' : 'Complete Setup') : 
-                (this.options.rtl ? 'بعدی' : 'Next')
-            }</span>
-            <span aria-hidden="true">${isLastStep ? '✓' : (this.options.rtl ? '→' : '→')}</span>
-        `;
+        const nextText = isLastStep ? 
+            (this.options.rtl ? 'تکمیل نصب' : 'Complete Setup') : 
+            (this.options.rtl ? 'بعدی' : 'Next');
+        const nextIcon = isLastStep ? '✓' : (this.options.rtl ? '←' : '→');
+        
+        if (this.options.rtl) {
+            this.nextButton.innerHTML = `
+                <span>${nextText}</span>
+                <span class="arrow-right" aria-hidden="true">${nextIcon}</span>
+            `;
+        } else {
+            this.nextButton.innerHTML = `
+                <span>${nextText}</span>
+                <span class="arrow-right" aria-hidden="true">${nextIcon}</span>
+            `;
+        }
         
         this.nextButton.disabled = !this.validateCurrentStep();
     }
