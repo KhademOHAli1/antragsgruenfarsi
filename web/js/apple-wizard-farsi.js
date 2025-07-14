@@ -871,79 +871,62 @@ class AppleFarsiWizard {
         `;
         this.nextButton.disabled = true;
 
-        // Prepare form data in the format expected by AntragsgruenInitSite
-        const formData = new FormData();
-        formData.append('_csrf', this.getCSRFToken());
-        formData.append('create', '1'); // This triggers the form submission
-        
         // Map our step data to the expected SiteCreateForm structure
         const siteFormData = this.prepareSiteFormData();
         
+        console.log('Submitting wizard data:', siteFormData);
+
+        // Create a form element and submit it normally (non-AJAX)
+        // This allows the browser to handle redirects naturally
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = window.location.href;
+        form.style.display = 'none';
+
+        // Add CSRF token
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '_csrf';
+        csrfInput.value = this.getCSRFToken();
+        form.appendChild(csrfInput);
+
+        // Add create parameter
+        const createInput = document.createElement('input');
+        createInput.type = 'hidden';
+        createInput.name = 'create';
+        createInput.value = '1';
+        form.appendChild(createInput);
+
         // Add all SiteCreateForm data
         Object.keys(siteFormData).forEach(key => {
             if (Array.isArray(siteFormData[key])) {
                 siteFormData[key].forEach(value => {
-                    formData.append(`SiteCreateForm[${key}][]`, value);
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = `SiteCreateForm[${key}][]`;
+                    input.value = value;
+                    form.appendChild(input);
                 });
             } else {
-                formData.append(`SiteCreateForm[${key}]`, siteFormData[key]);
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = `SiteCreateForm[${key}]`;
+                input.value = siteFormData[key];
+                form.appendChild(input);
             }
         });
 
-        console.log('Submitting wizard data:', siteFormData);
+        // Show success message before submitting
+        this.showSuccess();
+
+        // Add form to document and submit
+        document.body.appendChild(form);
         
-        // Debug: Show what's being sent
-        console.log('Form data being sent:');
-        for (let [key, value] of formData.entries()) {
-            console.log(key, '=', value);
-        }
-
-        // Submit form
-        fetch(window.location.href, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => {
-            console.log('Response status:', response.status);
-            console.log('Response headers:', response.headers);
-            
-            if (response.ok) {
-                return response.text();
-            } else {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-        })
-        .then(html => {
-            console.log('Response received, checking content...');
-            console.log('Response HTML length:', html.length);
-            
-            // Check if the response contains success indicators
-            if (html.includes('consultation/index') || html.includes('Installation completed') || html.includes('done')) {
-                console.log('Success detected in response');
-                this.showSuccess();
-                // Redirect after success
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
-            } else {
-                // If it's still the form, there might be validation errors
-                console.log('Form returned with possible errors');
-                console.log('Response preview:', html.substring(0, 500));
-                this.handleFormErrors(html);
-            }
-        })
-        .catch(error => {
-            console.error('Wizard submission error:', error);
-            this.showError(this.options.rtl ? 
-                'خطا در ارسال اطلاعات. لطفاً دوباره تلاش کنید.' :
-                'Error submitting data. Please try again.'
-            );
-            this.nextButton.disabled = false;
-            this.updateNavigation();
-        });
+        // Submit after a short delay to show the success message
+        setTimeout(() => {
+            console.log('Submitting form...');
+            form.submit();
+        }, 1000);
     }
 
     prepareSiteFormData() {
@@ -1049,37 +1032,6 @@ class AppleFarsiWizard {
         
         console.log('Prepared form data:', formData);
         return formData;
-    }
-
-    handleFormErrors(html) {
-        // Parse the returned HTML to check for error messages
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        
-        // Look for error messages
-        const errorElements = doc.querySelectorAll('.alert-danger, .form-error, .field-error');
-        
-        if (errorElements.length > 0) {
-            let errorMessage = this.options.rtl ? 
-                'خطاهای زیر رخ داده است:' : 
-                'The following errors occurred:';
-            
-            errorElements.forEach(el => {
-                errorMessage += '\n- ' + el.textContent.trim();
-            });
-            
-            this.showError(errorMessage);
-        } else {
-            // Generic error if we can't find specific errors
-            this.showError(this.options.rtl ? 
-                'خطا در ثبت اطلاعات. لطفاً موارد وارد شده را بررسی کنید.' :
-                'Error saving data. Please check your entries.'
-            );
-        }
-        
-        // Re-enable the button
-        this.nextButton.disabled = false;
-        this.updateNavigation();
     }
 
     showSuccess() {
