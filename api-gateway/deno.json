@@ -1,0 +1,28 @@
+{
+  "name": "antragsgruen-api-gateway",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Deno TypeScript API Gateway for Antragsgrün",
+  "scripts": {
+    "dev": "deno run --allow-net --allow-read --allow-env --watch main.ts",
+    "start": "deno run --allow-net --allow-read --allow-env main.ts",
+    "test": "deno test --allow-net --allow-read --allow-env",
+    "lint": "deno lint",
+    "format": "deno fmt",
+    "check": "deno check main.ts",
+    "cache": "deno cache main.ts",
+    "docker:build": "docker build -t antragsgruen-api-gateway .",
+    "docker:run": "docker run -p 8000:8000 antragsgruen-api-gateway"
+  },
+  "dependencies": {
+    "oak": "https://deno.land/x/oak@v12.6.1/mod.ts",
+    "cors": "https://deno.land/x/cors@v1.2.2/mod.ts",
+    "jose": "https://deno.land/x/jose@v4.15.4/index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0"
+  },
+  "engines": {
+    "deno": ">=1.43.0"
+  }
+}

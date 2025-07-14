@@ -1,0 +1,374 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'frontend/**'
+
+jobs:
+  lint-and-type-check:
+    name: Lint and Type Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Go for WASM build
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+
+      - name: Build WASM modules
+        run: |
+          cd src/wasm/diff
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Generate API types
+        run: npm run codegen
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Check formatting
+        run: npx prettier --check "src/**/*.{ts,tsx,js,jsx,json,css,md}"
+
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Go for WASM build
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+
+      - name: Build WASM modules
+        run: |
+          cd src/wasm/diff
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Run tests
+        run: npm test
+        env:
+          CI: true
+
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    services:
+      antragsgruen:
+        image: antragsgruen/antragsgruen:latest
+        ports:
+          - 8080:80
+        env:
+          MYSQL_HOST: mysql
+          MYSQL_DATABASE: antragsgruen
+          MYSQL_USER: antragsgruen
+          MYSQL_PASSWORD: antragsgruen
+      
+      mysql:
+        image: mysql:8.0
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: antragsgruen
+          MYSQL_USER: antragsgruen
+          MYSQL_PASSWORD: antragsgruen
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Go for WASM build
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+
+      - name: Build WASM modules
+        run: |
+          cd src/wasm/diff
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Wait for services
+        run: |
+          # Wait for MySQL to be ready
+          sleep 10
+          # Wait for Antragsgrün to be ready
+          timeout 60 bash -c 'until curl -f http://localhost:8080/health; do sleep 5; done'
+
+      - name: Build application
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_GATEWAY_URL: http://localhost:8000
+          API_GATEWAY_URL: http://localhost:8000
+
+      - name: Start application
+        run: npm start &
+        env:
+          PORT: 3000
+
+      - name: Wait for application
+        run: timeout 60 bash -c 'until curl -f http://localhost:3000; do sleep 5; done'
+
+      - name: Run Playwright tests
+        run: npm run test:e2e
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 30
+
+  lighthouse:
+    name: Lighthouse Performance Audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Go for WASM build
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+
+      - name: Build WASM modules
+        run: |
+          cd src/wasm/diff
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Build application
+        run: npm run build
+
+      - name: Start application
+        run: npm start &
+        env:
+          PORT: 3000
+
+      - name: Wait for application
+        run: timeout 60 bash -c 'until curl -f http://localhost:3000; do sleep 5; done'
+
+      - name: Run Lighthouse audit
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          configPath: frontend/lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+  accessibility:
+    name: Accessibility Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Start application
+        run: npm start &
+        env:
+          PORT: 3000
+
+      - name: Wait for application
+        run: timeout 60 bash -c 'until curl -f http://localhost:3000; do sleep 5; done'
+
+      - name: Run axe-core accessibility tests
+        run: |
+          npm install -g @axe-core/cli
+          axe http://localhost:3000 --exit
+
+  deploy-preview:
+    name: Deploy to Vercel Preview
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Go for WASM build
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+
+      - name: Build WASM modules
+        run: |
+          cd src/wasm/diff
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          github-comment: true
+          working-directory: frontend
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [lint-and-type-check, test, e2e, lighthouse, accessibility]
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Go for WASM build
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+
+      - name: Build WASM modules
+        run: |
+          cd src/wasm/diff
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: frontend
+
+      - name: Create deployment status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: context.payload.deployment.id,
+              state: 'success',
+              environment_url: 'https://antragsgruen.vercel.app',
+              description: 'Deployed to production'
+            });

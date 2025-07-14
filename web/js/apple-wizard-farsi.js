@@ -1011,10 +1011,6 @@ class AppleFarsiWizard {
     fallbackToAjax(siteFormData) {
         console.log('Using AJAX fallback...');
         
-        // Ensure completion flag is set
-        this.isCompleting = true;
-        window.onbeforeunload = null;
-        
         const formData = new FormData();
         formData.append('_csrf', this.getCSRFToken());
         formData.append('create', '1');
