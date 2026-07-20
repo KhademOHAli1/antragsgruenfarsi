@@ -99,9 +99,9 @@ func computeLineDiff(oldText, newText string) LineDiff {
 	newLinesText := strings.Join(newLines, "\n")
 	
 	// Use line mode for better line-by-line tracking
-	lineArray := dmp.DiffLinesToChars(oldLinesText, newLinesText)
-	diffs := dmp.DiffMain(lineArray.Chars1, lineArray.Chars2, false)
-	diffs = dmp.DiffCharsToLines(diffs, lineArray.LineArray)
+	chars1, chars2, lineArray := dmp.DiffLinesToChars(oldLinesText, newLinesText)
+	diffs := dmp.DiffMain(chars1, chars2, false)
+	diffs = dmp.DiffCharsToLines(diffs, lineArray)
 	diffs = dmp.DiffCleanupSemantic(diffs)
 
 	lines := make([]LineDiffLine, 0)
@@ -192,12 +192,12 @@ func applyPatch(text, patch string) map[string]interface{} {
 		}
 	}
 
-	results := dmp.PatchApply(patches, text)
-	
+	patchedText, applied := dmp.PatchApply(patches, text)
+
 	return map[string]interface{}{
 		"success": true,
-		"text":    results[0],
-		"applied": results[1],
+		"text":    patchedText,
+		"applied": applied,
 	}
 }
 
