@@ -74,7 +74,7 @@ const JWKS = createRemoteJWKSet(
 // Cache for GET requests
 const cache = new Map<
   string,
-  { data: unknown; timestamp: number; etag?: string }
+  { data: Context["response"]["body"]; timestamp: number; etag?: string }
 >();
 
 // Middleware: CORS
@@ -223,7 +223,7 @@ async function proxyToAntragsgruen(ctx: Context, path: string) {
 
     const contentType = response.headers.get("content-type");
     if (contentType?.includes("application/json")) {
-      const data = await response.json();
+      const data = await response.json() as Context["response"]["body"];
 
       // Cache GET responses
       if (ctx.request.method === "GET" && response.status === 200) {
@@ -232,7 +232,7 @@ async function proxyToAntragsgruen(ctx: Context, path: string) {
         cache.set(cacheKey, {
           data,
           timestamp: Date.now(),
-          etag,
+          etag: etag ?? undefined,
         });
 
         // Set cache headers
