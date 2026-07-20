@@ -1,0 +1,331 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Comparison operation "\>" between 0 and 0 is always false\.$#'
+			identifier: greater.alwaysFalse
+			count: 1
+			path: components/HTMLTools.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: components/HTMLTools.php
+
+		-
+			message: '#^Cannot access offset ''host'' on array\{scheme\?\: string, host\?\: string, port\?\: int\<0, 65535\>, user\?\: string, pass\?\: string, path\?\: string, query\?\: string, fragment\?\: string\}\|false\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: components/RSSExporter.php
+
+		-
+			message: '#^Cannot access offset ''scheme'' on array\{scheme\?\: string, host\?\: string, port\?\: int\<0, 65535\>, user\?\: string, pass\?\: string, path\?\: string, query\?\: string, fragment\?\: string\}\|false\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: components/RSSExporter.php
+
+		-
+			message: '#^Comparison operation "\>" between int\<40, max\> and 0 is always true\.$#'
+			identifier: greater.alwaysTrue
+			count: 1
+			path: components/diff/Diff.php
+
+		-
+			message: '#^Call to an undefined method DOMNode\:\:getAttribute\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: components/diff/DiffRenderer.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: if.alwaysFalse
+			count: 1
+			path: components/updater/available-updates.php
+
+		-
+			message: '#^Call to an undefined method yii\\console\\Request\|yii\\web\\Request\:\:getCookies\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: components/yii/User.php
+
+		-
+			message: '#^Call to an undefined method yii\\console\\Response\|yii\\web\\Response\:\:getCookies\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: components/yii/User.php
+
+		-
+			message: '#^Property yii\\web\\Cookie\:\:\$value \(string\) does not accept string\|false\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: components/yii/User.php
+
+		-
+			message: '#^Method app\\controllers\\Base\:\:getHttpHeader\(\) should return string\|null but returns array\|string\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: controllers/Base.php
+
+		-
+			message: '#^PHPDoc tag @var with type app\\models\\db\\TexTemplate is not subtype of native type null\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: controllers/MotionController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between 1 and 3 will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: controllers/MotionController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between app\\models\\db\\TexTemplate and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: controllers/MotionController.php
+
+		-
+			message: '#^Argument of an invalid type list\<string\>\|false supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: models/db/Consultation.php
+
+		-
+			message: '#^Method app\\models\\db\\Consultation\:\:getDateTime\(\) should return DateTime\|null but returns DateTime\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: models/db/Consultation.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between int\<min, \-3\>\|int\<\-1, max\> and \-2 will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: models/db/Consultation.php
+
+		-
+			message: '#^Property app\\models\\db\\FailedLoginAttempt\:\:\$dateAttempt \(string\) does not accept yii\\db\\Expression\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: models/db/FailedLoginAttempt.php
+
+		-
+			message: '#^Parameter \#1 \$condition of method yii\\db\\QueryInterface\:\:andWhere\(\) expects array, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: models/db/IComment.php
+
+		-
+			message: '#^Method app\\models\\db\\IMotion\:\:setExtraDataKey\(\) has parameter \$value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: models/db/IMotion.php
+
+		-
+			message: '#^Parameter \#1 \$condition of method yii\\db\\QueryInterface\:\:andWhere\(\) expects array, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: models/db/IMotion.php
+
+		-
+			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, array\<array\<string\>\|string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: models/exceptions/FormError.php
+
+		-
+			message: '#^Property app\\models\\exceptions\\FormError\:\:\$messages \(array\<string\>\) does not accept array\<array\<string\>\|string\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: models/exceptions/FormError.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: models/layoutHooks/StdHooks.php
+
+		-
+			message: '#^Parameter \#1 \$content of static method yii\\helpers\\BaseHtml\:\:encode\(\) expects string, int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: models/layoutHooks/StdHooks.php
+
+		-
+			message: '#^PHPDoc tag @var with type app\\models\\notifications\\IEmailAdmin is not subtype of native type \$this\(app\\models\\notifications\\Base\)\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: models/notifications/Base.php
+
+		-
+			message: '#^PHPDoc tag @var with type app\\models\\notifications\\IEmailUser is not subtype of native type \$this\(app\\models\\notifications\\Base\)\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: models/notifications/Base.php
+
+		-
+			message: '#^Parameter \#2 \$replace of function str_replace expects array\<string\>\|string, array\<int, int\<1, max\>\|string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: models/sectionTypes/ISectionType.php
+
+		-
+			message: '#^Variable \$linewith might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: models/sectionTypes/PDF.php
+
+		-
+			message: '#^Method app\\models\\sectionTypes\\TabularData\:\:saveTabularDataSettingsFromPost\(\) should return string\|null but returns string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: models/sectionTypes/TabularData.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: models/sectionTypes/TabularData.php
+
+		-
+			message: '#^Property app\\models\\sectionTypes\\TabularDataType\:\:\$rowId has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: models/sectionTypes/TabularDataType.php
+
+		-
+			message: '#^Property app\\models\\sectionTypes\\TabularDataType\:\:\$title has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: models/sectionTypes/TabularDataType.php
+
+		-
+			message: '#^Property app\\models\\sectionTypes\\TabularDataType\:\:\$type has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: models/sectionTypes/TabularDataType.php
+
+		-
+			message: '#^Parameter \#2 \$replace of function str_replace expects array\<string\>\|string, array\<int, int\|string\|null\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/discourse/Tools.php
+
+		-
+			message: '#^Access to property \$discourseCategoryId on an unknown class app\\plugins\\member_petitions\\ConsultationSettings\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/discourse/views/admin/consultation_settings.php
+
+		-
+			message: '#^PHPDoc tag @var for variable \$settings contains unknown class app\\plugins\\member_petitions\\ConsultationSettings\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/discourse/views/admin/consultation_settings.php
+
+		-
+			message: '#^Method app\\plugins\\drupal_civicrm\\DrupalPasswordHashing\:\:_password_crypt\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/drupal_civicrm/DrupalPasswordHashing.php
+
+		-
+			message: '#^Method app\\plugins\\drupal_civicrm\\DrupalPasswordHashing\:\:_password_get_count_log2\(\) should return int but returns int\<0, max\>\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: plugins/drupal_civicrm/DrupalPasswordHashing.php
+
+		-
+			message: '#^Parameter \#1 \$data of class app\\plugins\\drupal_civicrm\\PasswordAuthenticatorConfiguration constructor expects array\|string\|null, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: plugins/drupal_civicrm/Module.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 2
+			path: plugins/extra_css_js/LayoutHooks.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>title" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: plugins/gruen_ci/LayoutHooks3.php
+
+		-
+			message: '#^Call to method getAttributes\(\) on an unknown class SimpleSAML\\Auth\\Simple\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/gruene_ch_saml/SamlLogin.php
+
+		-
+			message: '#^Call to method isAuthenticated\(\) on an unknown class SimpleSAML\\Auth\\Simple\.$#'
+			identifier: class.notFound
+			count: 2
+			path: plugins/gruene_ch_saml/SamlLogin.php
+
+		-
+			message: '#^Call to method logout\(\) on an unknown class SimpleSAML\\Auth\\Simple\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/gruene_ch_saml/SamlLogin.php
+
+		-
+			message: '#^Call to method requireAuth\(\) on an unknown class SimpleSAML\\Auth\\Simple\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/gruene_ch_saml/SamlLogin.php
+
+		-
+			message: '#^Instantiated class SimpleSAML\\Auth\\Simple not found\.$#'
+			identifier: class.notFound
+			count: 2
+			path: plugins/gruene_ch_saml/SamlLogin.php
+
+		-
+			message: '#^Call to method getAttributes\(\) on an unknown class SimpleSAML\\Auth\\Simple\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/gruene_de_saml/SamlLogin.php
+
+		-
+			message: '#^Call to method isAuthenticated\(\) on an unknown class SimpleSAML\\Auth\\Simple\.$#'
+			identifier: class.notFound
+			count: 2
+			path: plugins/gruene_de_saml/SamlLogin.php
+
+		-
+			message: '#^Call to method logout\(\) on an unknown class SimpleSAML\\Auth\\Simple\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/gruene_de_saml/SamlLogin.php
+
+		-
+			message: '#^Call to method requireAuth\(\) on an unknown class SimpleSAML\\Auth\\Simple\.$#'
+			identifier: class.notFound
+			count: 1
+			path: plugins/gruene_de_saml/SamlLogin.php
+
+		-
+			message: '#^Instantiated class SimpleSAML\\Auth\\Simple not found\.$#'
+			identifier: class.notFound
+			count: 2
+			path: plugins/gruene_de_saml/SamlLogin.php
+
+		-
+			message: '#^Call to function method_exists\(\) with GuzzleHttp\\Exception\\GuzzleException and ''getMessage'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: plugins/openslides/PasswordAuthenticator.php
+
+		-
+			message: '#^Property app\\views\\pdfLayouts\\ByLDKPDF\:\:\$layout is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: views/pdfLayouts/ByLDKPDF.php
+
+		-
+			message: '#^Property app\\views\\pdfLayouts\\DBJRPDF\:\:\$layout is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: views/pdfLayouts/DBJRPDF.php
