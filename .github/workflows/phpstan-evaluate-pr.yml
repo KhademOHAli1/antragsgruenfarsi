@@ -26,10 +26,5 @@ jobs:
         with:
           php_version: "8.1"
           php_extensions: zip intl gd
-      - name: Generate review baseline
-        run: php -d memory_limit=1G vendor/bin/phpstan analyse --configuration=phpstan.neon --generate-baseline=phpstan-baseline.neon
-      - name: Upload review baseline
-        uses: actions/upload-artifact@v4
-        with:
-          name: phpstan-baseline
-          path: phpstan-baseline.neon
+      - name: PHPStan
+        run: php -d memory_limit=1G vendor/bin/phpstan analyse --configuration=phpstan.neon --error-format=github
