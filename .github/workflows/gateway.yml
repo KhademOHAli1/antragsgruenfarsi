@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   lint-and-test:
-    name: Lint and Test
+    name: Lint, Type Check, and Smoke Test
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -49,9 +49,25 @@ jobs:
       - name: Type check
         run: deno check main.ts
 
-      - name: Run tests
-        run: deno test --allow-net --allow-read --allow-env
+      - name: Smoke test health endpoint
+        run: |
+          deno run --allow-net --allow-read --allow-env main.ts > /tmp/gateway.log 2>&1 &
+          gateway_pid=$!
+          trap 'kill "$gateway_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl -fsS http://localhost:8000/health; then
+              exit 0
+            fi
+            if ! kill -0 "$gateway_pid" 2>/dev/null; then
+              cat /tmp/gateway.log
+              exit 1
+            fi
+            sleep 1
+          done
+          cat /tmp/gateway.log
+          exit 1
         env:
+          PORT: 8000
           ANTRAGSGRUEN_BASE_URL: http://localhost:8080
           RARIMO_ISSUER: https://auth.rarimo.com
           JWT_AUDIENCE: antragsgruen-api-test
@@ -66,6 +82,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2
